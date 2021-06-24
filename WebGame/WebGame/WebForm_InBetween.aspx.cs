@@ -45,12 +45,13 @@ namespace WebGame
             }
             else
             {
-                TextBox_Room.Text = room_number;                
+                TextBox_Room.Text = room_number;
+                
             }
 
+            String game_name = Convert.ToString(Session["game"]);
             Boolean IsInRoom = Convert.ToBoolean(Session["IsInRoom"]);
-            Boolean IsBattleStart = Convert.ToBoolean(Application["InBetween_IsBattleStart_" + room_number]);
-
+            Boolean IsBattleStart = Convert.ToBoolean(Application[game_name + "_IsBattleStart_" + room_number]);
 
             if (!IsInRoom & !IsBattleStart)
             {
@@ -87,34 +88,32 @@ namespace WebGame
         protected void Button_Start_Click(object sender, EventArgs e) 
         {
             String room_number = Convert.ToString(Request.QueryString["id"]);
+            
             if (room_number == null)
             {
                 RandomPork(room_number, "deal1", Image_deal1);
                 RandomPork(room_number, "deal2", Image_deal2);
+
+                Image_player1.ImageUrl = porkpath + "bicycle_backs.jpg";
+                Image_player2.ImageUrl = porkpath + "bicycle_backs.jpg";
+                Image_player3.ImageUrl = porkpath + "bicycle_backs.jpg";
+                Image_player4.ImageUrl = porkpath + "bicycle_backs.jpg";
+
+                Button_Start.Enabled = false;
+                Button_Bet.Enabled = true;
+                Button_Pass.Enabled = true;
+
+                Opening();
             }
             else
             {
-                Application["InBetween_IsBattleStart_" + room_number] = true;
-                Session["IsInRoom"] = false;
-
+                String game_name = Convert.ToString(Session["game"]);
+                Application[game_name + "_" + room_number + "_" + "_status"] = "InitialDeal";
+                Application[game_name + "_IsBattleStart_" + room_number] = true;
+                Session["IsInRoom"] = false;  
                 RandomPork(room_number, "deal1", Image_deal1);
                 RandomPork(room_number, "deal2", Image_deal2);
-
-                Image_deal1.ImageUrl = Convert.ToString(Application["InBetween_" + room_number + "_" + "deal1" + "_pork"]);
-                Image_deal2.ImageUrl = Convert.ToString(Application["InBetween_" + room_number + "_" + "deal2" + "_pork"]);
-            }         
-
-            Image_player1.ImageUrl = porkpath + "bicycle_backs.jpg";
-            Image_player2.ImageUrl = porkpath + "bicycle_backs.jpg";
-            Image_player3.ImageUrl = porkpath + "bicycle_backs.jpg";
-            Image_player4.ImageUrl = porkpath + "bicycle_backs.jpg";
-
-            Button_Start.Enabled = false;
-            Button_Bet.Enabled = true;
-            Button_Pass.Enabled = true;
-
-            Opening();
-
+            }  
         }
 
         protected void Button_Bet_Click(object sender, EventArgs e)
@@ -134,45 +133,27 @@ namespace WebGame
                 least_pork = 3;
                 pork = (ArrayList)Session["pork"];
                 RandomPork(room_number, "player1", (Image)player[0], false);
+                Bet();
+                Button_Start.Enabled = true;
+                Button_Bet.Enabled = false;
+                Button_Pass.Enabled = false;
+
+                if (pork.Count < least_pork)
+                {
+                    porkInitial();
+                    Label_Count.Text = "本輪已結束，新的一輪即將開始";
+                    Label_Count.Font.Size = FontUnit.Larger;
+                    Label_Count.Font.Bold = true;
+                }
             }
             else
             {
                 String game_name = Convert.ToString(Session["game"]);
-                ArrayList room_user = (ArrayList)Application[game_name + "_" + room_number];
-                least_pork = 2 + room_user.Count;
-                pork = (ArrayList)Application["pork" + room_number];
-                bool IsAction;
-                int order = Convert.ToInt32(Session["order"]);
-                Application["InBetween_" + room_number + "_" + "player" + (order+1) + "_action"] = true;
-
-                for (int i = 0; i <= room_user.Count - 1; i++)
-                {
-                    IsAction = Convert.ToBoolean(Application["InBetween_" + room_number + "_" + "player" + (i+1) + "_action"]);
-                    while(IsAction)
-                    {
-                        RandomPork(room_number, "player" + (i+1), (Image)player[i], false);
-                        ((Image)player[i]).ImageUrl = Convert.ToString(Application["InBetween_" + room_number + "_" + "player" + i + "_pork"]);
-                    }
-                }
-
-                Application["InBetween_" + room_number + "_" + "player" + (order + 1) + "_action"] = false;
-
-            }               
-
-            
-            Bet();
-            Button_Start.Enabled = true;
-            Button_Bet.Enabled = false;
-            Button_Pass.Enabled = false;
-
-            if (pork.Count < least_pork)
-            {
-                porkInitial();
-                Label_Count.Text = "本輪已結束，新的一輪即將開始";
-                Label_Count.Font.Size = FontUnit.Larger;
-                Label_Count.Font.Bold = true;
-            }
-
+                Application[game_name + "_" + room_number + "_" + "_status"] = "PlayerDeal";
+                int order = Convert.ToInt32(Session["order"]);                          
+                RandomPork(room_number, "player" + (order + 1), (Image)player[order], false);
+                Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_action"] = true;
+            } 
         }
 
         protected void Button_Pass_Click(object sender, EventArgs e)
@@ -268,7 +249,6 @@ namespace WebGame
                 int max_user = 4;
                 ExitRoom(last_room_number, game_name, user_name, max_user);
             }
-            
         }
 
         protected void Timer_Status_Tick(object sender, EventArgs e)
@@ -286,14 +266,14 @@ namespace WebGame
 
         protected void Timer_GameProcess_Tick(object sender, EventArgs e)
         {
-            String room_number = Convert.ToString(Request.QueryString["id"]);   
-            String room_status = Convert.ToString(Application["InBetween_" + room_number + "_" + "_status"]);
+            String room_number = Convert.ToString(Request.QueryString["id"]);
+            String game_name = Convert.ToString(Session["game"]);
+            String room_status = Convert.ToString(Application[game_name + "_" + room_number + "_" + "_status"]);
             switch(room_status)
             {
                 case "InitialDeal":
                     {
-                        InitialDeal();
-                        Opening();
+                        InitialDeal();                        
                     }
                     break;
                 case "PlayerDeal":
@@ -303,7 +283,7 @@ namespace WebGame
                     break;
                 case "UpdateResults":
                     {
-                        Bet();
+                        
                     }
                     break;
             }           
@@ -420,24 +400,11 @@ namespace WebGame
 
 
         protected void InitialDeal()
-        {
+        {     
             String room_number = Convert.ToString(Request.QueryString["id"]);
-            if (room_number == null)
-            {
-                RandomPork(room_number, "deal1", Image_deal1);
-                RandomPork(room_number, "deal2", Image_deal2);
-            }
-            else
-            {
-                Application["InBetween_IsBattleStart_" + room_number] = true;
-                Session["IsInRoom"] = false;
-
-                RandomPork(room_number, "deal1", Image_deal1);
-                RandomPork(room_number, "deal2", Image_deal2);
-
-                Image_deal1.ImageUrl = Convert.ToString(Application["InBetween_" + room_number + "_" + "deal1" + "_pork"]);
-                Image_deal2.ImageUrl = Convert.ToString(Application["InBetween_" + room_number + "_" + "deal2" + "_pork"]);
-            }
+            String game_name = Convert.ToString(Session["game"]);
+            Image_deal1.ImageUrl = Convert.ToString(Application[game_name + "_" + room_number + "_" + "deal1" + "_pork"]);
+            Image_deal2.ImageUrl = Convert.ToString(Application[game_name + "_" + room_number + "_" + "deal2" + "_pork"]);          
 
             Image_player1.ImageUrl = porkpath + "bicycle_backs.jpg";
             Image_player2.ImageUrl = porkpath + "bicycle_backs.jpg";
@@ -446,9 +413,10 @@ namespace WebGame
 
             Button_Start.Enabled = false;
             Button_Bet.Enabled = true;
-            Button_Pass.Enabled = true;
+            Button_Pass.Enabled = true;           
 
             Opening();
+            
         }
 
         protected void PlayerDeal()
@@ -461,43 +429,59 @@ namespace WebGame
 
             String room_number = Convert.ToString(Request.QueryString["id"]);
             ArrayList pork;
-            int least_pork;
+            int least_pork;           
+           
+            String game_name = Convert.ToString(Session["game"]);
+            ArrayList room_user = (ArrayList)Application[game_name + "_" + room_number];
+            least_pork = 2 + room_user.Count;
+            pork = (ArrayList)Application["pork" + room_number];
+            bool IsAction;
+            bool AllAction=true;
+            int order = Convert.ToInt32(Session["order"]);
+            
 
-            if (room_number == null)
-            {
-                least_pork = 3;
-                pork = (ArrayList)Session["pork"];
-                RandomPork(room_number, "player1", (Image)player[0], false);
-            }
-            else
-            {
-                String game_name = Convert.ToString(Session["game"]);
-                ArrayList room_user = (ArrayList)Application[game_name + "_" + room_number];
-                least_pork = 2 + room_user.Count;
-                pork = (ArrayList)Application["pork" + room_number];
-                bool IsAction;
-                int order = Convert.ToInt32(Session["order"]);
-                Application["InBetween_" + room_number + "_" + "player" + (order + 1) + "_action"] = true;
+            for (int i = 0; i <= room_user.Count - 1; i++)
+              {
+                 IsAction = Convert.ToBoolean(Application[game_name+"_" + room_number + "_" + "player" + (i + 1) + "_action"]);
+                 if (IsAction)
+                 {
+                     ((Image)player[i]).ImageUrl = Convert.ToString(Application[game_name + "_" + room_number + "_" + "player" + (i+1) + "_pork"]);
+                 }
+                else
+                {
+                    AllAction = false;
+                }
+              }
 
+
+
+            // Application[game_name+"_" + room_number + "_" + "player" + (order + 1) + "_action"] = false;
+
+            if (AllAction)
+            {
                 for (int i = 0; i <= room_user.Count - 1; i++)
                 {
-                    IsAction = Convert.ToBoolean(Application["InBetween_" + room_number + "_" + "player" + (i + 1) + "_action"]);
-                    while (IsAction)
-                    {
-                        RandomPork(room_number, "player" + (i + 1), (Image)player[i], false);
-                        ((Image)player[i]).ImageUrl = Convert.ToString(Application["InBetween_" + room_number + "_" + "player" + i + "_pork"]);
-                    }
-                }
+                    Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_action"] = false;
+                } 
 
-                Application["InBetween_" + room_number + "_" + "player" + (order + 1) + "_action"] = false;
-
+                Application[game_name + "_" + room_number + "_" + "_status"] = "UpdateResults";
             }
+            
+        }             
 
+
+        protected void UpdateResults()
+        {
+            String room_number = Convert.ToString(Request.QueryString["id"]);
+            String game_name = Convert.ToString(Session["game"]);
+            ArrayList room_user = (ArrayList)Application[game_name + "_" + room_number];
+            ArrayList pork = (ArrayList)Application["pork" + room_number];
+            int least_pork = 2 + room_user.Count;
 
             Bet();
-            Button_Start.Enabled = true;
-            Button_Bet.Enabled = false;
-            Button_Pass.Enabled = false;
+            
+            //Button_Bet.Enabled = false;
+            //Button_Pass.Enabled = false;
 
             if (pork.Count < least_pork)
             {
@@ -505,9 +489,9 @@ namespace WebGame
                 Label_Count.Text = "本輪已結束，新的一輪即將開始";
                 Label_Count.Font.Size = FontUnit.Larger;
                 Label_Count.Font.Bold = true;
+                Button_Start.Enabled = true;
             }
-        }             
-
+        }
 
         protected void Opening() //發牌
         {
@@ -515,6 +499,16 @@ namespace WebGame
             Label_Count.Text = "本輪剩下" + ((pork.Count / 2) - 1).ToString() + "場";
             Label_Count.Font.Size = FontUnit.Small;
             Label_Count.Font.Bold = false;
+            int least_pork=3;
+            String room_number = Convert.ToString(Request.QueryString["id"]);
+            if (room_number != null)
+            {
+                String game_name = Convert.ToString(Session["game"]);
+                ArrayList room_user = (ArrayList)Application[game_name + "_" + room_number];
+                least_pork = 2 + room_user.Count;
+            }
+
+
             if (Math.Abs(ChangeToNumber(Image_deal1) - ChangeToNumber(Image_deal2)) <= 1)
             {
                 Label_Result.Text = "You Lose! Please start again.";
@@ -531,7 +525,7 @@ namespace WebGame
                     Label_Count.Font.Size = FontUnit.Larger;
                     Label_Count.Font.Bold = true;
                 }
-                else if (pork.Count <= 2)
+                else if (pork.Count < least_pork)
                 {
                     porkInitial();
                     Label_Count.Text = "本輪已結束，新的一輪即將開始";
@@ -714,10 +708,11 @@ namespace WebGame
             else
             {
                 pork = (ArrayList)Application["pork" + room_number];
+                String game_name = Convert.ToString(Session["game"]);
                 n = pork.Count;
                 m = random.Next(1, n + 1) - 1;
                 picture = pork[m].ToString();
-                Application["InBetween_" + room_number + "_" + user + "_pork"] = picture;
+                Application[game_name + "_" + room_number + "_" + user + "_pork"] = picture;
 
                 if (IsRemove)
                 {
@@ -732,106 +727,6 @@ namespace WebGame
 
         #region "battle room"
 
-
-        /* 
-
-       //房間需額外創造，秀出已有的房間
-
-       protected void Load_Room()
-       {           
-           if (Application["room"] != null)
-           {
-               ListBox_BattleRoom.Items.Clear();
-
-               ArrayList room = new ArrayList();
-               room = (ArrayList)Application["room"];
-
-
-               for (int i = 0; i < room.Count; i++)
-               {
-                   ListBox_BattleRoom.Items.Add(room[i].ToString());
-               }
-
-
-               String room_number = Convert.ToString(Request.QueryString["id"]);                
-
-               if (Application[room_number] != null)
-               {
-                   ArrayList room_user = new ArrayList();
-                   room_user = (ArrayList)Application[room_number];
-                   String user = "";
-
-                   for (int i = 0; i < room_user.Count; i++)
-                   {
-                       user = user + room_user[i] + "</br>";
-                   }
-
-                   Label5.Text = user;
-               }  
-           }
-
-       }
-
-
-       protected void Button_Build_Click(object sender, EventArgs e)
-       {
-           ArrayList room = new ArrayList();
-           if((ArrayList)Application["room"] !=null)
-           {
-               room = (ArrayList)Application["room"];
-           }
-
-           String new_room_id = (ListBox_BattleRoom.Items.Count + 1).ToString("000");
-           room.Add(new_room_id);
-           ListBox_BattleRoom.Items.Add(new_room_id);          
-           Application["room"]= room;
-       }
-
-       protected void Button_Delete_Click(object sender, EventArgs e)
-       {
-           String room_number = ListBox_BattleRoom.SelectedItem.ToString();
-           if (Application[room_number] == null)
-           {
-               ArrayList room = new ArrayList();
-               if ((ArrayList)Application["room"] != null)
-               {
-                   room = (ArrayList)Application["room"];
-                   room.Remove(room_number);
-                   Application["room"] = room;
-               }
-           }
-       }
-
-        protected void ListBox_BattleRoom_SelectedIndexChanged(object sender, EventArgs e)
-       {
-           String last_room_number = Convert.ToString(Session["id"]);
-           String room_number = ListBox_BattleRoom.SelectedItem.ToString();
-           Session["id"] = room_number;
-           String new_url = Convert.ToString(Session["game"]) + "?id=" + room_number;
-
-           ArrayList room_user = new ArrayList();
-
-           if (Application[last_room_number] != null)
-           {
-               ArrayList last_room_user = new ArrayList();
-               last_room_user = (ArrayList)Application[last_room_number];
-               last_room_user.Remove(Convert.ToString(Session["user"]));
-               Application[last_room_number] = last_room_user;
-           }
-
-           if (Application[room_number] != null)
-           {
-               room_user = (ArrayList)Application[room_number];
-           }
-
-
-           room_user.Add(Convert.ToString(Session["user"]));
-           Application[room_number] = room_user;
-
-           Response.Redirect(new_url);
-       }
-
-       */
 
         //本來就有無限房間，只秀出有人的房號
         protected void Load_Room(ListBox room_list, Label user_list, String room_number, String game_name)
