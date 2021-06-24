@@ -22,6 +22,10 @@ namespace WebGame
             {
                 Session["game"] = "WebForm_InBetween.aspx";
             }
+            else if (sender == ImageButton2)
+            {
+                Session["game"] = "WebForm_JumpGame.aspx";
+            }
 
             Response.Redirect("WebForm_Login.aspx");
 
