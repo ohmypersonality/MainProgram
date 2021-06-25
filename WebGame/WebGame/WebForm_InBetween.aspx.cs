@@ -40,20 +40,20 @@ namespace WebGame
 
             String room_number = Convert.ToString(Request.QueryString["id"]);
             if (room_number == null)
-            {
+            {                
                 Session["IsInRoom"] = false;                              
             }
             else
             {
                 TextBox_Room.Text = room_number;
-                
+                Session["IsInRoom"] = true;
             }
 
             String game_name = Convert.ToString(Session["game"]);
             Boolean IsInRoom = Convert.ToBoolean(Session["IsInRoom"]);
             Boolean IsBattleStart = Convert.ToBoolean(Application[game_name + "_IsBattleStart_" + room_number]);
 
-            if (!IsInRoom & !IsBattleStart)
+            if (!IsInRoom)
             {
                 Timer_Status.Enabled = true;
                 Timer_Status.Interval = 1000;
@@ -64,7 +64,7 @@ namespace WebGame
                 Timer_Status.Enabled = false;
             }
 
-            if (IsInRoom)
+            if (IsInRoom && !IsBattleStart)
             {
                 Timer_RoomUser.Enabled = true;
                 Timer_RoomUser.Interval = 1000;                           
@@ -74,7 +74,7 @@ namespace WebGame
                 Timer_RoomUser.Enabled = false;
             }
 
-            if (IsBattleStart)
+            if (IsInRoom && IsBattleStart)
             {
                 Timer_GameProcess.Enabled = true;
                 Timer_GameProcess.Interval = 1000;                              
@@ -110,7 +110,7 @@ namespace WebGame
                 String game_name = Convert.ToString(Session["game"]);
                 Application[game_name + "_" + room_number + "_" + "_status"] = "InitialDeal";
                 Application[game_name + "_IsBattleStart_" + room_number] = true;
-                Session["IsInRoom"] = false;  
+                //Session["IsInRoom"] = false;  
                 RandomPork(room_number, "deal1", Image_deal1);
                 RandomPork(room_number, "deal2", Image_deal2);
             }  
@@ -148,11 +148,11 @@ namespace WebGame
             }
             else
             {
-                String game_name = Convert.ToString(Session["game"]);
-                Application[game_name + "_" + room_number + "_" + "_status"] = "PlayerDeal";
+                String game_name = Convert.ToString(Session["game"]);                
                 int order = Convert.ToInt32(Session["order"]);                          
                 RandomPork(room_number, "player" + (order + 1), (Image)player[order], false);
                 Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_action"] = true;
+                Application[game_name + "_" + room_number + "_" + "_status"] = "PlayerDeal";
             } 
         }
 
@@ -195,7 +195,7 @@ namespace WebGame
         protected void Button_Record_Click(object sender, EventArgs e)
         {
             Class_Game newGame = new Class_Game();
-            newGame.record("InBetween", Convert.ToString(Session["user"]), "score", Convert.ToInt32(Label_MaxCoinRecord.Text));
+            newGame.record("InBetween", Convert.ToString(Session["user"]), "score", Convert.ToInt32(Label_NowCoin.Text));
             newGame.rank("InBetween", "score", GridView1);
             porkInitial();
             coinInitial();
@@ -276,14 +276,29 @@ namespace WebGame
                         InitialDeal();                        
                     }
                     break;
+                case "OpeningCheck":
+                    {
+                        Opening();                       
+                    }
+                    break;
+                case "UpdateScore_Opening":
+                    {
+                        UpdateScore_Opening();
+                    }
+                    break;
                 case "PlayerDeal":
                     {
                         PlayerDeal();
                     }
                     break;
-                case "UpdateResults":
+                case "GameResults":
                     {
-                        
+                        GameResults();                        
+                    }
+                    break;
+                case "UpdateScore_Action":
+                    {                        
+                        UpdateScore_Action();
                     }
                     break;
             }           
@@ -307,12 +322,7 @@ namespace WebGame
             player_name.Add(Label_player2);
             player_name.Add(Label_player3);
             player_name.Add(Label_player4);
-
-            ArrayList player_score = new ArrayList();
-            player_score.Add(Label_score1);
-            player_score.Add(Label_score2);
-            player_score.Add(Label_score3);
-            player_score.Add(Label_score4);
+                       
 
             String room_number = Convert.ToString(Request.QueryString["id"]);
 
@@ -332,18 +342,30 @@ namespace WebGame
                 int order = room_user.IndexOf(user_name);
                 Session["order"] = order;
                 int count = room_user.Count;
+                
 
                 for (int i = 0; i <= 3; i++)
                 {
                     if (i <= count - 1)
                     {
                         ((Image)player[i]).Visible = true;
-                        ((Label)player_name[i]).Text = Convert.ToString(room_user[i]);
+
+                        if(i==order)
+                        {
+                            ((Label)player_name[i]).Text = Convert.ToString(room_user[i])+" (me)";
+                        }
+                        else
+                        {
+                            ((Label)player_name[i]).Text = Convert.ToString(room_user[i]);
+                        }
+                        
+                        Application[game_name + "_" + room_number + "_" + "player" + (i + 1) + "_score"] = 50000;
                     }
                     else
                     {
                         ((Image)player[i]).Visible = false;
                         ((Label)player_name[i]).Text = "";
+                        Application[game_name + "_" + room_number + "_" + "player" + (i + 1) + "_score"] = "";
                     }
                 }
             }
@@ -395,7 +417,6 @@ namespace WebGame
         {
             Label_NowCoin.Text = "50000";
             TextBox_BetCoin.Text = "1000";
-            Label_MaxCoinRecord.Text = "50000";
         }
 
 
@@ -403,20 +424,34 @@ namespace WebGame
         {     
             String room_number = Convert.ToString(Request.QueryString["id"]);
             String game_name = Convert.ToString(Session["game"]);
-            Image_deal1.ImageUrl = Convert.ToString(Application[game_name + "_" + room_number + "_" + "deal1" + "_pork"]);
-            Image_deal2.ImageUrl = Convert.ToString(Application[game_name + "_" + room_number + "_" + "deal2" + "_pork"]);          
+           
+            String deal1_new = Convert.ToString(Application[game_name + "_" + room_number + "_" + "deal1" + "_pork"]);
+            String deal2_new = Convert.ToString(Application[game_name + "_" + room_number + "_" + "deal2" + "_pork"]);
+           
+           Image_deal1.ImageUrl = deal1_new;
+           Image_deal2.ImageUrl = deal2_new;    
 
-            Image_player1.ImageUrl = porkpath + "bicycle_backs.jpg";
-            Image_player2.ImageUrl = porkpath + "bicycle_backs.jpg";
-            Image_player3.ImageUrl = porkpath + "bicycle_backs.jpg";
-            Image_player4.ImageUrl = porkpath + "bicycle_backs.jpg";
+           Image_player1.ImageUrl = porkpath + "bicycle_backs.jpg";
+           Image_player2.ImageUrl = porkpath + "bicycle_backs.jpg";
+           Image_player3.ImageUrl = porkpath + "bicycle_backs.jpg";
+           Image_player4.ImageUrl = porkpath + "bicycle_backs.jpg";
 
-            Button_Start.Enabled = false;
-            Button_Bet.Enabled = true;
-            Button_Pass.Enabled = true;           
+           Button_Start.Enabled = false;
+           Button_Bet.Enabled = true;
+           Button_Pass.Enabled = true;
 
-            Opening();
-            
+           int order = Convert.ToInt32(Session["order"]);
+
+           if (Image_deal1.ImageUrl.Equals(deal1_new) && Image_deal2.ImageUrl.Equals(deal2_new))
+           {
+                Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_status"] = "OpeningCheck";
+           }
+
+           if(GameStatusCheck("OpeningCheck"))
+            {
+                Application[game_name + "_" + room_number + "_" + "_status"] = "OpeningCheck";
+            }
+
         }
 
         protected void PlayerDeal()
@@ -438,6 +473,7 @@ namespace WebGame
             bool IsAction;
             bool AllAction=true;
             int order = Convert.ToInt32(Session["order"]);
+            String newUrl;
             
 
             for (int i = 0; i <= room_user.Count - 1; i++)
@@ -445,7 +481,8 @@ namespace WebGame
                  IsAction = Convert.ToBoolean(Application[game_name+"_" + room_number + "_" + "player" + (i + 1) + "_action"]);
                  if (IsAction)
                  {
-                     ((Image)player[i]).ImageUrl = Convert.ToString(Application[game_name + "_" + room_number + "_" + "player" + (i+1) + "_pork"]);
+                    newUrl = Convert.ToString(Application[game_name + "_" + room_number + "_" + "player" + (i + 1) + "_pork"]);
+                    ((Image)player[i]).ImageUrl = newUrl;                  
                  }
                 else
                 {
@@ -454,23 +491,52 @@ namespace WebGame
               }
 
 
+            if(((Image)player[order]).ImageUrl.Equals(Convert.ToString(Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_pork"])))
+            {
+                Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_status"]= "GameResults";
+            }
+
+
 
             // Application[game_name+"_" + room_number + "_" + "player" + (order + 1) + "_action"] = false;
 
             if (AllAction)
             {
-                for (int i = 0; i <= room_user.Count - 1; i++)
+                if(GameStatusCheck("GameResults"))
                 {
-                    Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_action"] = false;
-                } 
+                    for (int i = 0; i <= room_user.Count - 1; i++)
+                    {
+                        Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_action"] = false;
+                    }
 
-                Application[game_name + "_" + room_number + "_" + "_status"] = "UpdateResults";
+                    Application[game_name + "_" + room_number + "_" + "_status"] = "GameResults";
+                }               
             }
             
         }             
 
 
-        protected void UpdateResults()
+        protected Boolean GameStatusCheck(String Status)
+        {
+            String room_number = Convert.ToString(Request.QueryString["id"]);
+            String game_name = Convert.ToString(Session["game"]);
+            ArrayList room_user = (ArrayList)Application[game_name + "_" + room_number];
+            String playerStatus;           
+
+            for(int i =0;i<=room_user.Count-1;i++)
+            {
+                playerStatus = Convert.ToString(Application[game_name + "_" + room_number + "_" + "player" + (i + 1) + "_status"]);
+                if (playerStatus!= Status)
+                {
+                    return false;
+                }                
+            }
+
+            return true;
+        }
+
+
+        protected void GameResults()
         {
             String room_number = Convert.ToString(Request.QueryString["id"]);
             String game_name = Convert.ToString(Session["game"]);
@@ -479,9 +545,10 @@ namespace WebGame
             int least_pork = 2 + room_user.Count;
 
             Bet();
-            
-            //Button_Bet.Enabled = false;
-            //Button_Pass.Enabled = false;
+
+            Button_Bet.Enabled = false;
+            Button_Pass.Enabled = false;
+            Button_Start.Enabled = true;
 
             if (pork.Count < least_pork)
             {
@@ -512,30 +579,144 @@ namespace WebGame
             if (Math.Abs(ChangeToNumber(Image_deal1) - ChangeToNumber(Image_deal2)) <= 1)
             {
                 Label_Result.Text = "You Lose! Please start again.";
-                Label_NowCoin.Text = (Convert.ToInt32(Label_NowCoin.Text) - Convert.ToInt32(TextBox_BetCoin.Text)).ToString();
-                Button_Start.Enabled = true;
-                Button_Bet.Enabled = false;
-                Button_Pass.Enabled = false;
+                if (room_number == null)
+                {
+                    Label_NowCoin.Text = (Convert.ToInt32(Label_NowCoin.Text) - Convert.ToInt32(TextBox_BetCoin.Text)).ToString();
 
-                if (Convert.ToInt32(Label_NowCoin.Text) <= 0)
-                {
-                    porkInitial();
-                    coinInitial();
-                    Label_Count.Text = "輸到脫褲子! 重新開局!";
-                    Label_Count.Font.Size = FontUnit.Larger;
-                    Label_Count.Font.Bold = true;
+                    Button_Start.Enabled = true;
+                    Button_Bet.Enabled = false;
+                    Button_Pass.Enabled = false;
+
+                    if (Convert.ToInt32(Label_NowCoin.Text) <= 0)
+                    {
+                        porkInitial();
+                        coinInitial();
+                        Label_Count.Text = "輸到脫褲子! 重新開局!";
+                        Label_Count.Font.Size = FontUnit.Larger;
+                        Label_Count.Font.Bold = true;
+                    }
+                    else if (pork.Count < least_pork)
+                    {
+                        porkInitial();
+                        Label_Count.Text = "本輪已結束，新的一輪即將開始";
+                        Label_Count.Font.Size = FontUnit.Larger;
+                        Label_Count.Font.Bold = true;
+                    }
                 }
-                else if (pork.Count < least_pork)
+                else
                 {
-                    porkInitial();
-                    Label_Count.Text = "本輪已結束，新的一輪即將開始";
-                    Label_Count.Font.Size = FontUnit.Larger;
-                    Label_Count.Font.Bold = true;
-                }
+                    String game_name = Convert.ToString(Session["game"]);
+                    ArrayList room_user = (ArrayList)Application[game_name + "_" + room_number];
+                    int count = room_user.Count;
+                    int order = Convert.ToInt32(Session["order"]);
+                    int newCoin = Convert.ToInt32(Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_score"]) - Convert.ToInt32(TextBox_BetCoin.Text);
+                    Label_NowCoin.Text = newCoin.ToString();
+                                        
+                    Button_Bet.Enabled = false;
+                    Button_Pass.Enabled = false;                                 
+
+
+                    if (Convert.ToInt32(Label_NowCoin.Text) <= 0)
+                    {
+                        porkInitial();
+                        coinInitial();
+                        Label_Count.Text = "輸到脫褲子! 重新開局!";
+                        Label_Count.Font.Size = FontUnit.Larger;
+                        Label_Count.Font.Bold = true;
+                        Button_Start.Enabled = true;
+
+                    }
+                    else if (pork.Count < least_pork)
+                    {
+                        porkInitial();
+                        Label_Count.Text = "本輪已結束，新的一輪即將開始";
+                        Label_Count.Font.Size = FontUnit.Larger;
+                        Label_Count.Font.Bold = true;
+                        Button_Start.Enabled = true;
+                    }
+
+
+                    if (Label_NowCoin.Text.Equals(newCoin.ToString()))
+                    {
+                        Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_status"] = "UpdateScore_Opening";
+                    }
+
+                    if(GameStatusCheck("UpdateScore_Opening"))
+                    {
+                        for (int i = 0; i <= count - 1; i++)
+                        {
+                            if (i == order)
+                            {
+                                Application[game_name + "_" + room_number + "_" + "player" + (i + 1) + "_score"] = Label_NowCoin.Text;
+                            }
+                        }
+                        Application[game_name + "_" + room_number + "_" + "_status"] = "UpdateScore_Opening";
+                    }
+                }                    
+                
             }
             else
             {
                 Label_Result.Text = "Bet or Pass?";
+            }
+        }
+
+
+        protected void UpdateScore_Opening()
+        {
+            ArrayList player_score = new ArrayList();
+            player_score.Add(Label_score1);
+            player_score.Add(Label_score2);
+            player_score.Add(Label_score3);
+            player_score.Add(Label_score4);
+
+            String game_name = Convert.ToString(Session["game"]);
+            String room_number = Convert.ToString(Request.QueryString["id"]);           
+            int order=Convert.ToInt32(Session["order"]);           
+
+            for (int i = 0; i <= 3; i++)
+            {
+                ((Label)player_score[i]).Text = Convert.ToString(Application[game_name + "_" + room_number + "_" + "player" + (i + 1) + "_score"]);
+
+              if (Label_NowCoin.Text.Equals(((Label)player_score[order]).Text))
+              {
+                  Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_status"] = "PlayerDeal";
+              }                             
+            }
+
+            if (GameStatusCheck("PlayerDeal"))            {
+                
+                Application[game_name + "_" + room_number + "_" + "_status"] = "PlayerDeal";
+            }
+
+        }
+
+        protected void UpdateScore_Action()
+        {
+            ArrayList player_score = new ArrayList();
+            player_score.Add(Label_score1);
+            player_score.Add(Label_score2);
+            player_score.Add(Label_score3);
+            player_score.Add(Label_score4);
+
+            String game_name = Convert.ToString(Session["game"]);
+            String room_number = Convert.ToString(Request.QueryString["id"]);
+            int order = Convert.ToInt32(Session["order"]);
+
+            for (int i = 0; i <= 3; i++)
+            {
+                ((Label)player_score[i]).Text = Convert.ToString(Application[game_name + "_" + room_number + "_" + "player" + (i + 1) + "_score"]);
+
+                if (Label_NowCoin.Text.Equals(((Label)player_score[order]).Text))
+                {
+                    Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_status"] = "InitialDeal";
+                }
+               
+            }
+
+            if (GameStatusCheck("InitialDeal"))
+            {
+                Application[game_name + "_" + room_number + "_" + "_status"] = "InitialDeal";
             }
         }
 
@@ -576,11 +757,7 @@ namespace WebGame
                 else
                 {
                     Label_Result.Text = "In door! You Win!";
-                    Label_NowCoin.Text = (Convert.ToInt32(Label_NowCoin.Text) + Convert.ToInt32(TextBox_BetCoin.Text)).ToString();
-                    if (Convert.ToInt32(Label_NowCoin.Text) > Convert.ToInt32(Label_MaxCoinRecord.Text))
-                    {
-                        Label_MaxCoinRecord.Text = Label_NowCoin.Text;
-                    }
+                    Label_NowCoin.Text = (Convert.ToInt32(Label_NowCoin.Text) + Convert.ToInt32(TextBox_BetCoin.Text)).ToString();                   
                 }
 
             }
@@ -601,68 +778,59 @@ namespace WebGame
                 String game_name = Convert.ToString(Session["game"]);
                 ArrayList room_user = (ArrayList)Application[game_name + "_" + room_number];
                 int count = room_user.Count;
+                int order = Convert.ToInt32(Session["order"]);
+                int newCoin;
 
-                for(int i=0;i<=count-1;i++)
+             
+                if ((ChangeToNumber((Image)player[order]) - ChangeToNumber(Image_deal1)) * (ChangeToNumber((Image)player[order]) - ChangeToNumber(Image_deal2)) == 0)
                 {
-                    int order = Convert.ToInt32(Session["order"]);
-                    if (i== order)
+                   Label_Result.Text = "Bump! You Lose!";
+                   newCoin = Convert.ToInt32(Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_score"]) - 2 * Convert.ToInt32(TextBox_BetCoin.Text);
+                }
+                else if ((ChangeToNumber((Image)player[order]) - ChangeToNumber(Image_deal1)) * (ChangeToNumber((Image)player[order]) - ChangeToNumber(Image_deal2)) > 0)
+                {
+                   Label_Result.Text = "Out of door! You Lose!";
+                   newCoin = Convert.ToInt32(Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_score"]) - Convert.ToInt32(TextBox_BetCoin.Text);
+                }
+                else
+                {
+                   Label_Result.Text = "In door! You Win!";
+                   newCoin = Convert.ToInt32(Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_score"]) + Convert.ToInt32(TextBox_BetCoin.Text);
+                }
+
+                if(newCoin <= 0)
+                {
+                    porkInitial();
+                    coinInitial();
+                    Label_Count.Text = "輸到脫褲子! 重新開局!";
+                    Label_Count.Font.Size = FontUnit.Larger;
+                    Label_Count.Font.Bold = true;
+                    Button_Start.Enabled = true;
+                }
+                else
+                {
+                    Label_NowCoin.Text = newCoin.ToString();
+
+                    if (Label_NowCoin.Text.Equals(newCoin.ToString()))
                     {
-                        if ((ChangeToNumber((Image)player[i]) - ChangeToNumber(Image_deal1)) * (ChangeToNumber((Image)player[i]) - ChangeToNumber(Image_deal2)) == 0)
-                        {
-                            Label_Result.Text = "Bump! You Lose!";
-                            Label_NowCoin.Text = (Convert.ToInt32(Label_NowCoin.Text) - 2 * Convert.ToInt32(TextBox_BetCoin.Text)).ToString();
-                            /*
-                            if (Convert.ToInt32(Label_NowCoin.Text) <= 0)
-                            {
-                                porkInitial();
-                                coinInitial();
-                                Label_Count.Text = "輸到脫褲子! 重新開局!";
-                                Label_Count.Font.Size = FontUnit.Larger;
-                                Label_Count.Font.Bold = true;
-                            }
-                            */
-                        }
-                        else if ((ChangeToNumber((Image)player[i]) - ChangeToNumber(Image_deal1)) * (ChangeToNumber((Image)player[i]) - ChangeToNumber(Image_deal2)) > 0)
-                        {
-                            Label_Result.Text = "Out of door! You Lose!";
-                            Label_NowCoin.Text = (Convert.ToInt32(Label_NowCoin.Text) - Convert.ToInt32(TextBox_BetCoin.Text)).ToString();
-                            /*
-                            if (Convert.ToInt32(Label_NowCoin.Text) <= 0)
-                            {
-                                porkInitial();
-                                coinInitial();
-                                Label_Count.Text = "輸到脫褲子! 重新開局!";
-                                Label_Count.Font.Size = FontUnit.Larger;
-                                Label_Count.Font.Bold = true;
-                            }
-                            */
-                        }
-                        else
-                        {
-                            Label_Result.Text = "In door! You Win!";
-                            Label_NowCoin.Text = (Convert.ToInt32(Label_NowCoin.Text) + Convert.ToInt32(TextBox_BetCoin.Text)).ToString();
-                            /*
-                            if (Convert.ToInt32(Label_NowCoin.Text) > Convert.ToInt32(Label_MaxCoinRecord.Text))
-                            {
-                                Label_MaxCoinRecord.Text = Label_NowCoin.Text;
-                            }
-                            */
-                        }
-
-                        ((Label)player_score[order]).Text = Label_NowCoin.Text;
-
+                        Application[game_name + "_" + room_number + "_" + "player" + (order + 1) + "_status"] = "UpdateScore_Action";
 
                     }
 
-                    
-
-
-
+                    if (GameStatusCheck("UpdateScore_Action"))
+                    {
+                        for(int i=0;i<= count-1;i++)
+                        {
+                            if(i==order)
+                            {
+                                Application[game_name + "_" + room_number + "_" + "player" + (i + 1) + "_score"] = Label_NowCoin.Text;
+                            }                          
+                        }
+                        
+                        Application[game_name + "_" + room_number + "_" + "_status"] = "UpdateScore_Action";
+                    }
                 }
-
-
-            }
-                
+            }  
         }
 
         /*
@@ -835,6 +1003,8 @@ namespace WebGame
                 }
 
                 Session["IsInRoom"] = true;
+                ListBox_BattleRoom.Visible = false;
+                GridView1.Visible = false;
                 Response.Redirect(new_url); //跳轉至有帶有房號的網址
             }
             else
@@ -891,6 +1061,8 @@ namespace WebGame
 
             //Session["IsInRoom"] = false;
             TextBox_Room.Text = "";
+            ListBox_BattleRoom.Visible = true;
+            GridView1.Visible = true;
             Response.Redirect(game_name);
         }
 

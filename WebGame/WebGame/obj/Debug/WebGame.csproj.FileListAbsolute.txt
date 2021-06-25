@@ -1,4 +1,3 @@
-G:\project\WebGame\WebGame\WebGame\obj\Debug\WebGame.csprojAssemblyReference.cache
 G:\project\WebGame\WebGame\WebGame\obj\Debug\WebGame.csproj.CoreCompileInputs.cache
 G:\project\WebGame\WebGame\WebGame\bin\WebGame.dll.config
 G:\project\WebGame\WebGame\WebGame\bin\WebGame.dll
@@ -82,3 +81,4 @@ G:\project\WebGame\WebGame\WebGame\bin\Microsoft.Configuration.ConfigurationBuil
 G:\project\WebGame\WebGame\WebGame\bin\Microsoft.Configuration.ConfigurationBuilders.UserSecrets.dll
 G:\project\WebGame\WebGame\WebGame\bin\Microsoft.Configuration.ConfigurationBuilders.Base.xml
 G:\project\WebGame\WebGame\WebGame\bin\Microsoft.Configuration.ConfigurationBuilders.UserSecrets.xml
+G:\project\WebGame\WebGame\WebGame\obj\Debug\WebGame.csprojAssemblyReference.cache
