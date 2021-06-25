@@ -126,7 +126,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
-    <Content Include="css\style.css" />
+    <Content Include="css\styles.css" />
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -143,6 +143,10 @@
     <Content Include="js\prefixfree.min.js" />
     <Content Include="pic\icon\InBetween.png" />
     <Content Include="pic\icon\JumpGame.JPG" />
+    <Content Include="pic\icon\mora.jpg" />
+    <Content Include="pic\mora\paper.png" />
+    <Content Include="pic\mora\scissors.png" />
+    <Content Include="pic\mora\stone.png" />
     <Content Include="pic\poker\bicycle_backs.jpg" />
     <Content Include="pic\poker\bicycle_front.jpg" />
     <Content Include="pic\poker\p01.jpg" />

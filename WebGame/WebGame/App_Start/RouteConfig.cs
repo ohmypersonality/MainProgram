@@ -13,6 +13,7 @@ namespace WebGame
             var settings = new FriendlyUrlSettings();
             settings.AutoRedirectMode = RedirectMode.Permanent;
             routes.EnableFriendlyUrls(settings);
+            routes.MapPageRoute("default","", "~/WebForm_GameSelection.aspx");
         }
     }
 }
