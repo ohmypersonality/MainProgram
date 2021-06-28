@@ -113,9 +113,9 @@
                <div class="Image_poker">
                     <asp:Image ID="Image_deal1" runat="server" Height="240px" ImageUrl="~/pic/poker/bicycle_backs.jpg" Width="180px" />
                     <asp:Image ID="Image_player1" runat="server" ImageUrl="~/pic/poker/bicycle_backs.jpg" Height="240px" Width="180px" />
-                    <asp:Image ID="Image_player2" runat="server" ImageUrl="~/pic/poker/bicycle_backs.jpg" Height="240px" Width="180px" />
-                    <asp:Image ID="Image_player3" runat="server" ImageUrl="~/pic/poker/bicycle_backs.jpg" Height="240px" Width="180px" />
-                    <asp:Image ID="Image_player4" runat="server" ImageUrl="~/pic/poker/bicycle_backs.jpg" Height="240px" Width="180px" />
+                    <asp:Image ID="Image_player2" runat="server" ImageUrl="~/pic/poker/bicycle_backs.jpg" Height="240px" Width="180px" Visible="False"/>
+                    <asp:Image ID="Image_player3" runat="server" ImageUrl="~/pic/poker/bicycle_backs.jpg" Height="240px" Width="180px" Visible="False"/>
+                    <asp:Image ID="Image_player4" runat="server" ImageUrl="~/pic/poker/bicycle_backs.jpg" Height="240px" Width="180px" Visible="False"/>
                     <asp:Image ID="Image_deal2" runat="server" ImageUrl="~/pic/poker/bicycle_backs.jpg" Height="240px" Width="180px" />
                </div> 
 
@@ -145,7 +145,8 @@
             <asp:Button ID="Button_Start" runat="server" OnClick="Button_Start_Click" Text="Start" />
             <asp:Button ID="Button_Bet" runat="server" OnClick="Button_Bet_Click" Text="Bet" />    
             <asp:Button ID="Button_Pass" runat="server" OnClick="Button_Pass_Click" Text="Pass" /> 
-            <asp:Button ID="Button_Record" runat="server" OnClick="Button_Record_Click" Text="Record and ReSet" />  
+            <asp:Button ID="Button_Record" runat="server" OnClick="Button_Record_Click" Text="Record and ReSet" /> 
+            <asp:Button ID="Button1" runat="server" OnClick="Button_Test_Click" Text="Test" />  
 
             <br />
             <br />
@@ -185,7 +186,10 @@
                     <asp:AsyncPostBackTrigger ControlID="Timer_Status" EventName="Tick" />
                 </Triggers>
             </asp:UpdatePanel>
-            <asp:Label ID="Label5" runat="server" Text=""></asp:Label> 
+            <asp:Label ID="Label5" runat="server" Text=""></asp:Label>
+            <br />            
+            <br />
+            <asp:Label ID="Label2" runat="server" Text="Look Here"></asp:Label>
         </div>
     
         <asp:Timer ID="Timer_Status" runat="server" OnTick="Timer_Status_Tick">
