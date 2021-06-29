@@ -132,7 +132,6 @@
             </ContentTemplate>            
             <Triggers>                
                 <asp:AsyncPostBackTrigger ControlID="Timer_RoomUser" EventName="Tick" />
-                <asp:AsyncPostBackTrigger ControlID="Timer_GameProcess" EventName="Tick" /> 
             </Triggers>
         </asp:UpdatePanel>
 
@@ -143,10 +142,9 @@
 
         <div class="OtherObject">
             <asp:Button ID="Button_Start" runat="server" OnClick="Button_Start_Click" Text="Start" />
-            <asp:Button ID="Button_Bet" runat="server" OnClick="Button_Bet_Click" Text="Bet" />    
-            <asp:Button ID="Button_Pass" runat="server" OnClick="Button_Pass_Click" Text="Pass" /> 
-            <asp:Button ID="Button_Record" runat="server" OnClick="Button_Record_Click" Text="Record and ReSet" /> 
-            <asp:Button ID="Button1" runat="server" OnClick="Button_Test_Click" Text="Test" />  
+            <asp:Button ID="Button_Bet" runat="server" OnClick="Button_PlayerAction_Click" Text="Bet" />    
+            <asp:Button ID="Button_Pass" runat="server" OnClick="Button_PlayerAction_Click" Text="Pass" /> 
+            <asp:Button ID="Button_Record" runat="server" OnClick="Button_Record_Click" Text="Record and ReSet" />
 
             <br />
             <br />
@@ -196,9 +194,6 @@
         </asp:Timer>
 
         <asp:Timer ID="Timer_RoomUser" runat="server" OnTick="Timer_RoomUser_Tick">
-        </asp:Timer>
-
-        <asp:Timer ID="Timer_GameProcess" runat="server" OnTick="Timer_GameProcess_Tick">
         </asp:Timer>
         
     </form> 
