@@ -208,6 +208,7 @@
     <Content Include="WebForm_Login.aspx" />
     <None Include="Properties\PublishProfiles\WebGame20210611084607 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\WebGame20210625121434 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\WebGame20210629221822 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

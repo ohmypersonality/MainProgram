@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+此檔案由您的 Web 專案發佈/封裝處理序使用。您可以藉由編輯此 MSBuild 檔案，
+自訂此處理序的行為。若要深入了解，請前往 https://go.microsoft.com/fwlink/?LinkID=208121。 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAHLgf8cqe2022+CAOrguaaQAAAAACAAAAAAAQZgAAAAEAACAAAAB/qoqHoF75CEjqZNF3wFknQm0ah1gob/5NvcuAWW6TWwAAAAAOgAAAAAIAACAAAACY7crX/a7wwAOmNfgSMR9h26FCmLYYY//xYTcL+47oqIAAAAA8n/tx8WjtQuz6/YS0iuzt8jVm+8nb7/WQKM5Xr8O5kpJJLsgj3D3/slDy6hrE8whisGygVDBfOdMCKDVTB3v6QuQDWvZ765xDT3v5U9vjXuLP8m6C2q7/j0LldIYQlVOJnQ5Jvts9afQaAXCdnCYKq6J0/Pg/JNh8UO50+YbnsUAAAADIE3IZAq6A0xcbBmP8BsUphuTceymZYWMQ/AdJ7wL0A5LCnPcqE6AVcfdkAv0V9ZKzls5dtQBALwu6UfhSJqOx</EncryptedPassword>
+    <History>True|2021-06-29T14:36:01.6027877Z;True|2021-06-29T22:23:29.8804356+08:00;</History>
+  </PropertyGroup>
+</Project>

@@ -13,7 +13,7 @@ namespace WebGame
         {
             if (Convert.ToString(Session["game"]) == "")
             {
-                Response.Redirect("WebForm_GameSelection");
+                Response.Redirect("WebForm_GameSelection",false);
             }
         }
 
