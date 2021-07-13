@@ -118,7 +118,18 @@ body{
 </style>
 
   
-<body>
+<body onbeforeunload="return closingFunction()">
+    <script>
+        var room_number;
+        var game_name;
+        var order;
+        function closingFunction()
+        { 
+            room_number = TextBox_Room.Text;
+            game_name = "WebForm_InBetween.aspx";            
+            Application[game_name + "_" + room_number + "_closeWindow"] = Session["order"];            
+        }
+</script>
     <div class="body"></div>
     <!--在html中使用伺服器控制項，一定要用form標籤，而且只能用一次-->
     <form id="form1" runat="server" method="post"> 
@@ -177,8 +188,7 @@ body{
 
             </ContentTemplate>            
             <Triggers>                
-                <asp:AsyncPostBackTrigger ControlID="Timer_RoomUser" EventName="Tick" />
-                <asp:AsyncPostBackTrigger ControlID="Timer_Battle" EventName="Tick" />                
+                <asp:AsyncPostBackTrigger ControlID="Timer_RoomUser" EventName="Tick" />                
             </Triggers>
         </asp:UpdatePanel>
 
@@ -215,10 +225,7 @@ body{
         </asp:Timer>
 
         <asp:Timer ID="Timer_RoomUser" runat="server" OnTick="Timer_RoomUser_Tick">
-        </asp:Timer>
-
-        <asp:Timer ID="Timer_Battle" runat="server" OnTick="Timer_Battle_Tick">
-        </asp:Timer>
+        </asp:Timer>        
         
     </form> 
 
