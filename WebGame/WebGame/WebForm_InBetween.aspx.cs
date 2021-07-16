@@ -46,7 +46,8 @@ namespace WebGame
 
 
                 if (room_number == null)
-                {                                 
+                {
+                    Button_Record.Text = "Record and ReSet";
                     ListBox_BattleRoom.Visible = true;
                     GridView1.Visible = true;
                     Button_ExitRoom.Enabled = false;
@@ -56,7 +57,8 @@ namespace WebGame
                     await roomMonitor();
                 }
                 else
-                {                  
+                {
+                    Button_Record.Text = "ReSet";
                     TextBox_Room.Text = room_number;
                     ListBox_BattleRoom.Visible = false;
                     GridView1.Visible = false;
@@ -103,9 +105,12 @@ namespace WebGame
         
         protected void Button_Record_Click(object sender, EventArgs e)
         {
-            Class_Game newGame = new Class_Game();
-            newGame.record("InBetween", Convert.ToString(Session["user"]), "score", Convert.ToInt32(Label_NowCoin.Text));
-            newGame.rank("InBetween", "score", GridView1);
+            if (room_number == null)
+            {
+                Class_Game newGame = new Class_Game();
+                newGame.record("InBetween", Convert.ToString(Session["user"]), "score", Convert.ToInt32(Label_NowCoin.Text));
+                newGame.rank("InBetween", "score", GridView1);
+            }            
 
             porkInitial();
             coinInitial();
@@ -231,6 +236,7 @@ namespace WebGame
                     //int order = room_user.IndexOf(user_name);
                     int order = Convert.ToInt32(Session["order"]);
                     int count = room_user.Count;
+                    int initial_score = 50000;
 
                     //Session["order"] = order;
 
@@ -240,23 +246,28 @@ namespace WebGame
                         {
                             ((Image)player[i]).Visible = true;
 
+                            if (Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)] == null)
+                            {
+                                Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)] = initial_score;
+                            }
+                            ((Label)player_score[i]).Text = Convert.ToString(Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)]);
+
                             if (i == order)
                             {
                                 ((Label)player_name[i]).Text = Convert.ToString(room_user[i]) + " (me)";
+                                Label_NowCoin.Text = ((Label)player_score[i]).Text;
                             }
                             else
                             {
                                 ((Label)player_name[i]).Text = Convert.ToString(room_user[i]);
-                            }
-
-                            Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)] = 50000;
+                            }                       
                         }
                         else
                         {
                             ((Image)player[i]).Visible = false;
                             ((Label)player_name[i]).Text = "";
                             ((Label)player_score[i]).Text = "";
-                            Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)] = "";
+                            Application.Remove(game_name + "_" + room_number + "_score_" + "player" + (i + 1));
                         }
                     }
                 }
@@ -290,8 +301,31 @@ namespace WebGame
 
         protected void coinInitial() //將賭金初始化
         {
-            Label_NowCoin.Text = "50000";
-            TextBox_BetCoin.Text = "1000";
+            if (room_number == null)
+            {
+                Label_NowCoin.Text = "50000";
+                TextBox_BetCoin.Text = "1000";
+            }
+            else
+            {
+                ArrayList player_score = new ArrayList();
+                player_score.Add(Label_score1);
+                player_score.Add(Label_score2);
+                player_score.Add(Label_score3);
+                player_score.Add(Label_score4);
+
+                Dictionary<int, String> room_user = (Dictionary<int, String>)Application[game_name + "_" + room_number];
+                int count = room_user.Count;
+                int initial_score = 50000;
+
+                for (int i =0;i<=count-1;i++)
+                {
+                    Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)] = initial_score;
+                    ((Label)player_score[i]).Text = initial_score.ToString();
+                }
+            }
+
+            
         }
 
         protected void RandomPork(String room_number, String user, Image image, bool IsRemove = true) //隨機發牌
