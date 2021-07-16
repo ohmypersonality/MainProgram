@@ -107,7 +107,7 @@ body{
 
 .OtherObject{
 	position: absolute;
-	top: calc(62% - 75px);
+	top: calc(62.5% - 75px);
 	left: calc(10% - 50px);
 	height: 150px;
 	width: 6000px;
@@ -118,19 +118,18 @@ body{
 </style>
 
   
-<body onbeforeunload="return closingFunction()">
-    <script>
-        var room_number;
-        var game_name;
-        var order;
-        function closingFunction()
-        { 
-            room_number = TextBox_Room.Text;
-            game_name = "WebForm_InBetween.aspx";            
-            Application[game_name + "_" + room_number + "_closeWindow"] = Session["order"];            
-        }
-</script>
+<body>   
     <div class="body"></div>
+    <script>
+        //window.onload = function () {
+        //    window.open("WebForm_Logout.aspx");
+        //    return "Are you sure to close?";
+        //}
+
+        //window.onbeforeunload = function () {
+        //    return "";    
+        //}
+</script>
     <!--在html中使用伺服器控制項，一定要用form標籤，而且只能用一次-->
     <form id="form1" runat="server" method="post"> 
         <!--在html中使用UpdatePanel，一定要前面加這一行，而且只能用一次-->
@@ -184,6 +183,15 @@ body{
                     <br />
                     <br />
                     <asp:Label ID="Label_Result" runat="server" Text="請點擊Start開局" style="color:orange;"></asp:Label>   
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <asp:Button ID="Button_EnterRoom" runat="server" OnClick="Button_EnterRoom_Click" Text="Enter Room" /> 
+                    <asp:Button ID="Button_ExitRoom" runat="server" OnClick="Button_ExitRoom_Click" Text="Exit Room" Enabled="false" /> 
              </div>
 
             </ContentTemplate>            
@@ -204,11 +212,11 @@ body{
             <br />
             <br />            
             <asp:Label ID="Label4" runat="server" Text="Battle Room: " style="color:white;"></asp:Label>
-            <asp:TextBox ID="TextBox_Room" runat="server" Text=""></asp:TextBox>    
-            <asp:Button ID="Button_EnterRoom" runat="server" OnClick="Button_EnterRoom_Click" Text="Enter Room" /> 
-            <asp:Button ID="Button_ExitRoom" runat="server" OnClick="Button_ExitRoom_Click" Text="Exit Room" Enabled="false" />  
+            <asp:TextBox ID="TextBox_Room" runat="server" Text=""></asp:TextBox>
             <br />            
-            <br />       
+            <br />
+            <br />            
+            <br />
             
             <asp:UpdatePanel ID="UpdatePanel1" runat="server"  UpdateMode="Conditional" ChildrenAsTriggers="true">
                 <ContentTemplate>
