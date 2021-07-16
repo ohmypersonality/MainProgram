@@ -192,6 +192,12 @@ namespace WebGame
             player_name.Add(Label_player3);
             player_name.Add(Label_player4);
 
+            ArrayList player_score = new ArrayList();
+            player_score.Add(Label_score1);
+            player_score.Add(Label_score2);
+            player_score.Add(Label_score3);
+            player_score.Add(Label_score4);
+
             //String room_number = Convert.ToString(Request.QueryString["id"]);
 
             if (room_number == null)
@@ -212,7 +218,7 @@ namespace WebGame
                     await InitialDeal();
                     //Timer_RoomUser.Enabled = false;
                 }
-                else if(status.Equals("RandomDeal_First") || status.Equals("RandomDeal") || status.Equals("ReSet"))
+                else if(status.Equals("RandomDeal_First") || status.Equals("RandomDeal"))
                 {
                     
                 }
@@ -249,6 +255,7 @@ namespace WebGame
                         {
                             ((Image)player[i]).Visible = false;
                             ((Label)player_name[i]).Text = "";
+                            ((Label)player_score[i]).Text = "";
                             Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)] = "";
                         }
                     }
@@ -427,8 +434,8 @@ namespace WebGame
                 {
                 }
 
-                Timer_RoomUser.Enabled = false;
                 Button_ExitRoom.Enabled = false;
+                Timer_RoomUser.Enabled = false;                
 
                 //ArrayList room_user = (ArrayList)Application[game_name + "_" + room_number];
                 Dictionary<int, String> room_user = (Dictionary<int, String>)Application[game_name + "_" + room_number];
@@ -1120,10 +1127,30 @@ namespace WebGame
 
                 Dictionary<String, String> room = (Dictionary<String, String>)Application[game_name + "_room"];
                 String tempString = "";
+                String room_status = "";
+                String room_status_string = "";
 
                 foreach (KeyValuePair<string, string> kvp in room)
                 {
-                    tempString = kvp.Key + ":" + kvp.Value;
+                    room_status = Convert.ToString(Application[game_name + "_" + kvp.Key + "_status"]);
+                    
+                    switch(room_status)
+                    {                      
+                        case "GameStart":
+                        case "RandomDeal_First":
+                        case "RandomDeal":
+                            {
+                                room_status_string = "(進行中)";
+                            }
+                            break;
+                        default:
+                            {
+                                room_status_string = "(可進入)";
+                            }
+                            break;
+                    }
+
+                    tempString = kvp.Key + ":" + room_status_string+kvp.Value;
                     room_list.Items.Add(tempString);
                 }
 
@@ -1147,88 +1174,98 @@ namespace WebGame
         protected void EnterRoom(String room_number, String game_name, String user_name, int max_user)
         {
             Timer_RoomUser.Enabled = true;
-            Timer_RoomUser.Interval = 500;
+            Timer_RoomUser.Interval = 500;            
 
+            
             if (room_number != "") //確定欄位有值
             {
-                String new_url = game_name + "?id=" + room_number; //將房號以變數形式加在新網址當中
-                Dictionary<String, String> room = new Dictionary<String, String>(); //我們希望房號跟使用者能夠分開紀錄，以便查詢，因此使用帶鍵/值對的Dictionary來存放有人的房號
-                //ArrayList room_user = new ArrayList(); //以ArayList來存放特定房號中的所有user
-                Dictionary<int, String> room_user = new Dictionary<int, String>(); 
-                String all_user = ""; //room要加入的對象為(room_number, all_user)，all_user為含有所有user的字串
-
-                if (Application[game_name + "_room"] != null) //確定有房間有人
+                String RoomStatus = Convert.ToString(Application[game_name + "_" + room_number + "_status"]);
+                if (RoomStatus.Equals("GameStart") || RoomStatus.Equals("RandomDeal_First") || RoomStatus.Equals("RandomDeal"))
                 {
-                    room = (Dictionary<String, String>)Application[game_name + "_room"]; //由於已有房間有人，Application[game_name + "_room"]有紀錄，因此先讀出紀錄
+                    MessageBox.Show("該房間已開始遊戲，無法進入!");
+                }
+                else
+                {
+                    String new_url = game_name + "?id=" + room_number; //將房號以變數形式加在新網址當中
+                    Dictionary<String, String> room = new Dictionary<String, String>(); //我們希望房號跟使用者能夠分開紀錄，以便查詢，因此使用帶鍵/值對的Dictionary來存放有人的房號
+                                                                                        //ArrayList room_user = new ArrayList(); //以ArayList來存放特定房號中的所有user
+                    Dictionary<int, String> room_user = new Dictionary<int, String>();
+                    String all_user = ""; //room要加入的對象為(room_number, all_user)，all_user為含有所有user的字串
 
-
-                    if (Application[game_name + "_" + room_number] != null) //確定要進入的房間有人
+                    if (Application[game_name + "_room"] != null) //確定有房間有人
                     {
-                        //room_user = (ArrayList)Application[game_name + "_" + room_number]; //由於要進入的房間有人，Application[game_name + "_" + room_number]有紀錄，因此先讀出紀錄
-                        room_user = (Dictionary<int, String>)Application[game_name + "_" + room_number];                        
-                        Session["order"] = room_user.Count;
+                        room = (Dictionary<String, String>)Application[game_name + "_room"]; //由於已有房間有人，Application[game_name + "_room"]有紀錄，因此先讀出紀錄
 
-                        if (room_user.Count < max_user) //判斷房間是否滿了，最多max_user個人
+
+                        if (Application[game_name + "_" + room_number] != null) //確定要進入的房間有人
                         {
-                            //room_user.Add(user_name); //新增一名進入房間的使用者
-                            room_user.Add(room_user.Count, user_name);
-                        }
-                        else //判斷不能加入，通知使用者並跳出此函式
-                        {
-                            MessageBox.Show("人數已滿，請找其他房間!");
-                            return;
-                        }
-                       
-                        for (int i = 0; i <= room_user.Count - 1; i++) //需用for loop將所有使用者串成一個字串，再丟入all_user中
-                        {
-                            
-                            if (i == 0)
+                            //room_user = (ArrayList)Application[game_name + "_" + room_number]; //由於要進入的房間有人，Application[game_name + "_" + room_number]有紀錄，因此先讀出紀錄
+                            room_user = (Dictionary<int, String>)Application[game_name + "_" + room_number];
+                            Session["order"] = room_user.Count;
+
+                            if (room_user.Count < max_user) //判斷房間是否滿了，最多max_user個人
                             {
-                                all_user = "(" + room_user.Count + "/" + max_user + ")" + Convert.ToString(room_user[i]);
+                                //room_user.Add(user_name); //新增一名進入房間的使用者
+                                room_user.Add(room_user.Count, user_name);
                             }
-                            else
+                            else //判斷不能加入，通知使用者並跳出此函式
                             {
-                                all_user += "," + Convert.ToString(room_user[i]);
+                                MessageBox.Show("人數已滿，請找其他房間!");
+                                return;
                             }
-                        }
 
-                        if (room.ContainsKey(room_number)) //確認讀出的紀錄中，正要進入的房間是否有紀錄(理論上 Application[game_name + "_" + room_number] 有東西就應該有紀錄)
+                            for (int i = 0; i <= room_user.Count - 1; i++) //需用for loop將所有使用者串成一個字串，再丟入all_user中
+                            {
+
+                                if (i == 0)
+                                {
+                                    all_user = "(" + room_user.Count + "/" + max_user + ")" + Convert.ToString(room_user[i]);
+                                }
+                                else
+                                {
+                                    all_user += "," + Convert.ToString(room_user[i]);
+                                }
+                            }
+
+                            if (room.ContainsKey(room_number)) //確認讀出的紀錄中，正要進入的房間是否有紀錄(理論上 Application[game_name + "_" + room_number] 有東西就應該有紀錄)
+                            {
+                                room.Remove(room_number); //先刪除已存在的紀錄(後面新增進入房間的使用者後再重新加入)
+                            }
+
+                            room.Add(room_number, all_user);
+                        }
+                        else //確定要進入的房間沒有人
                         {
-                            room.Remove(room_number); //先刪除已存在的紀錄(後面新增進入房間的使用者後再重新加入)
+                            Session["order"] = 0;
+                            room_user.Add(0, user_name);
+                            all_user = "(" + room_user.Count + "/" + max_user + ")" + Convert.ToString(room_user[0]);
+                            room.Add(room_number, all_user);
                         }
 
-                        room.Add(room_number, all_user);
                     }
-                    else //確定要進入的房間沒有人
+                    else //所有的房間都沒有人
                     {
                         Session["order"] = 0;
-                        room_user.Add(0,user_name);
+                        room_user.Add(0, user_name);
                         all_user = "(" + room_user.Count + "/" + max_user + ")" + Convert.ToString(room_user[0]);
                         room.Add(room_number, all_user);
                     }
 
-                }
-                else //所有的房間都沒有人
-                {
-                    Session["order"] = 0;
-                    room_user.Add(0,user_name);
-                    all_user = "(" + room_user.Count + "/" + max_user + ")" + Convert.ToString(room_user[0]);
-                    room.Add(room_number, all_user);
-                }
+                    Application[game_name + "_" + room_number] = room_user; //更新Application[game_name + "_" + room_number]中的資訊
+                    Application[game_name + "_room"] = room; //更新Application[game_name+"_room"]中的資訊     
 
-                Application[game_name + "_" + room_number] = room_user; //更新Application[game_name + "_" + room_number]中的資訊
-                Application[game_name + "_room"] = room; //更新Application[game_name+"_room"]中的資訊     
+                    String last_room_number = Convert.ToString(Request.QueryString["id"]); //以get方式取得網址上"?id="後面的房號
+                    if (last_room_number != null) //若有房號，則在跳轉之前需先執行ExitRoom
+                    {
+                        int order = Convert.ToInt32(Session["order"]);
+                        ExitRoom(last_room_number, game_name, order, max_user);
+                    }
 
-                String last_room_number = Convert.ToString(Request.QueryString["id"]); //以get方式取得網址上"?id="後面的房號
-                if (last_room_number != null) //若有房號，則在跳轉之前需先執行ExitRoom
-                {
-                    int order = Convert.ToInt32(Session["order"]);
-                    ExitRoom(last_room_number, game_name, order, max_user);
+                    //Session["IsInRoom"] = true;
+                    Application[game_name + "_" + room_number + "_count"] = Convert.ToInt32(Application[game_name + "_" + room_number + "_count"]) + 1;
+                    Response.Redirect(new_url); //跳轉至有帶有房號的網址
                 }
-
-                //Session["IsInRoom"] = true;
-                Application[game_name + "_" + room_number + "_count"] = Convert.ToInt32(Application[game_name + "_" + room_number + "_count"]) + 1;
-                Response.Redirect(new_url); //跳轉至有帶有房號的網址
+                
             }
             else
             {

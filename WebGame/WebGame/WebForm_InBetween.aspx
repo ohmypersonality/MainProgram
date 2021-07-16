@@ -94,7 +94,7 @@ body{
 }    
 
 
-.updateObject{
+.updateButtonAndStatus{
 	position: absolute;
 	top: calc(45% - 75px);
 	left: calc(10% - 50px);
@@ -109,11 +109,22 @@ body{
 	position: absolute;
 	top: calc(62.5% - 75px);
 	left: calc(10% - 50px);
+	height: 70px;
+	width: 6000px;
+	padding: 10px;
+	z-index: 2;   
+}
+
+.BattleRoom{
+	position: absolute;
+	top: calc(70% - 75px);
+	left: calc(10% - 50px);
 	height: 150px;
 	width: 6000px;
 	padding: 10px;
 	z-index: 2;   
 }
+
 
 </style>
 
@@ -167,7 +178,7 @@ body{
                     <asp:Image ID="Image_deal2" runat="server" ImageUrl="~/pic/poker/bicycle_backs.jpg" Height="240px" Width="180px" />
                </div> 
                 
-              <div class="updateObject">
+              <div class="updateButtonAndStatus">
                     
                     <asp:Button ID="Button_Start" runat="server" OnClick="Button_Start_Click" Text="Start" />
                     <asp:Button ID="Button_Bet" runat="server" OnClick="Button_PlayerAction_Click" Text="Bet" Enabled="false" />    
@@ -190,8 +201,7 @@ body{
                     <br />
                     <br />
                     <br />
-                    <asp:Button ID="Button_EnterRoom" runat="server" OnClick="Button_EnterRoom_Click" Text="Enter Room" /> 
-                    <asp:Button ID="Button_ExitRoom" runat="server" OnClick="Button_ExitRoom_Click" Text="Exit Room" Enabled="false" /> 
+                    
              </div>
 
             </ContentTemplate>            
@@ -206,24 +216,27 @@ body{
         </div>
 
         <div class="OtherObject">
-      
+            
             <asp:Label ID="Label1" runat="server" Text="BetCoin: " style="color:white;"></asp:Label>
             <asp:TextBox ID="TextBox_BetCoin" runat="server" Text=1000 OnTextChanged="TextBox_BetCoin_TextChanged"></asp:TextBox>
             <br />
             <br />            
             <asp:Label ID="Label4" runat="server" Text="Battle Room: " style="color:white;"></asp:Label>
-            <asp:TextBox ID="TextBox_Room" runat="server" Text=""></asp:TextBox>
+            <asp:TextBox ID="TextBox_Room" runat="server" Text=""></asp:TextBox>            
+        </div> 
+
+        <div class="BattleRoom">
+            <asp:Button ID="Button_EnterRoom" runat="server" OnClick="Button_EnterRoom_Click" Text="Enter Room" /> 
+            <asp:Button ID="Button_ExitRoom" runat="server" OnClick="Button_ExitRoom_Click" Text="Exit Room" Enabled="false" />
             <br />            
             <br />
-            <br />            
-            <br />
-            
             <asp:UpdatePanel ID="UpdatePanel1" runat="server"  UpdateMode="Conditional" ChildrenAsTriggers="true">
                 <ContentTemplate>
                     <asp:ListBox ID="ListBox_BattleRoom" runat="server" OnSelectedIndexChanged="ListBox_BattleRoom_SelectedIndexChanged" Width="316px" AutoPostBack="True"></asp:ListBox>
                 </ContentTemplate>
                 <Triggers>
                     <asp:AsyncPostBackTrigger ControlID="Timer_Status" EventName="Tick" />
+                    <asp:AsyncPostBackTrigger ControlID="Timer_RoomUser" EventName="Tick" />
                 </Triggers>
             </asp:UpdatePanel>
             <asp:Label ID="Label5" runat="server" Text="" style="color:white;"></asp:Label>
