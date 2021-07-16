@@ -207,6 +207,8 @@
     <Content Include="WebForm_InBetween.aspx" />
     <Content Include="WebForm_JumpGame.aspx" />
     <Content Include="WebForm_Login.aspx" />
+    <Content Include="Handler_logout.ashx" />
+    <Content Include="WebForm_Logout.aspx" />
     <None Include="Properties\PublishProfiles\WebGame20210611084607 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\WebGame20210625121434 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\WebGame20210629221822 - Web Deploy.pubxml" />
@@ -275,6 +277,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Handler_logout.ashx.cs">
+      <DependentUpon>Handler_logout.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
@@ -324,6 +329,13 @@
     </Compile>
     <Compile Include="WebForm_Login.aspx.designer.cs">
       <DependentUpon>WebForm_Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WebForm_Logout.aspx.cs">
+      <DependentUpon>WebForm_Logout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebForm_Logout.aspx.designer.cs">
+      <DependentUpon>WebForm_Logout.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
