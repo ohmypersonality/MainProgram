@@ -249,15 +249,6 @@ namespace WebGame
         protected global::System.Web.UI.WebControls.Label Label_Result;
 
         /// <summary>
-        /// GridView1 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView GridView1;
-
-        /// <summary>
         /// Label1 控制項。
         /// </summary>
         /// <remarks>
@@ -294,6 +285,15 @@ namespace WebGame
         protected global::System.Web.UI.WebControls.TextBox TextBox_Room;
 
         /// <summary>
+        /// UpdatePanel1 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+
+        /// <summary>
         /// Button_EnterRoom 控制項。
         /// </summary>
         /// <remarks>
@@ -312,15 +312,6 @@ namespace WebGame
         protected global::System.Web.UI.WebControls.Button Button_ExitRoom;
 
         /// <summary>
-        /// UpdatePanel1 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
-
-        /// <summary>
         /// ListBox_BattleRoom 控制項。
         /// </summary>
         /// <remarks>
@@ -330,13 +321,13 @@ namespace WebGame
         protected global::System.Web.UI.WebControls.ListBox ListBox_BattleRoom;
 
         /// <summary>
-        /// Label5 控制項。
+        /// GridView1 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label5;
+        protected global::System.Web.UI.WebControls.GridView GridView1;
 
         /// <summary>
         /// Timer_Status 控制項。

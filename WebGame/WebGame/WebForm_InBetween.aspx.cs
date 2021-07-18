@@ -114,7 +114,7 @@ namespace WebGame
                 if (nowCoin > 0)
                 {
                     Class_Game newGame = new Class_Game();
-                    newGame.record("InBetween", Convert.ToString(Session["user"]), "score", nowCoin);
+                    newGame.record("InBetween", user_name, "score", nowCoin);
                     newGame.rank("InBetween", "score", GridView1);
                 }
                 else
@@ -180,7 +180,7 @@ namespace WebGame
         {
             //String room_number = Convert.ToString(Request.QueryString["id"]);
             //String game_name = Convert.ToString(Session["game"]);
-            Load_Room(ListBox_BattleRoom, Label5, room_number, game_name);
+            Load_Room(ListBox_BattleRoom, room_number, game_name);
             //roomMonitor();
         }
 
@@ -234,7 +234,7 @@ namespace WebGame
                     await InitialDeal();
                     //Timer_RoomUser.Enabled = false;
                 }
-                else if(status.Equals("RandomDeal_First") || status.Equals("RandomDeal"))
+                else if(status.Equals("RandomDeal_First") || status.Equals("RandomDeal") || status.Equals("ReSet"))
                 {
                     
                 }
@@ -285,8 +285,6 @@ namespace WebGame
                         }
                     }
                 }
-
-                
             }
         }
 
@@ -623,6 +621,7 @@ namespace WebGame
                         Label_Count.Font.Size = FontUnit.Larger;
                         Label_Count.Font.Bold = true;
                         Button_ExitRoom.Enabled = true;
+                        Application[game_name + "_" + room_number + "_status"] = "NewGame";
                     }
 
                     Label_NowCoin.Text = newCoin.ToString();
@@ -1008,6 +1007,7 @@ namespace WebGame
                 Label_Count.Font.Size = FontUnit.Larger;
                 Label_Count.Font.Bold = true;
                 Button_ExitRoom.Enabled = true;
+                Application[game_name + "_" + room_number + "_status"] = "NewGame";
             }
 
             await ButtonEnabledControl("GameStart");
@@ -1151,7 +1151,7 @@ namespace WebGame
 
 
         //本來就有無限房間，只秀出有人的房號
-        protected void Load_Room(ListBox room_list, Label user_list, String room_number, String game_name)
+        protected void Load_Room(ListBox room_list, String room_number, String game_name)
         {
             //String test = Convert.ToString(Application["test"]);
             
@@ -1187,6 +1187,7 @@ namespace WebGame
                         case "GameStart":
                         case "RandomDeal_First":
                         case "RandomDeal":
+                        case "ReSet":
                             {
                                 room_status_string = "(進行中)";
                             }
@@ -1213,9 +1214,7 @@ namespace WebGame
                     for (int i = 0; i <= room_user.Count - 1; i++)
                     {
                         user = user + room_user[i] + "</br>";
-                    }
-
-                    user_list.Text = user;
+                    }                    
                 }
             }
         }
@@ -1228,7 +1227,7 @@ namespace WebGame
             if (room_number != "") //確定欄位有值
             {
                 String RoomStatus = Convert.ToString(Application[game_name + "_" + room_number + "_status"]);
-                if (RoomStatus.Equals("GameStart") || RoomStatus.Equals("RandomDeal_First") || RoomStatus.Equals("RandomDeal"))
+                if (RoomStatus.Equals("GameStart") || RoomStatus.Equals("RandomDeal_First") || RoomStatus.Equals("RandomDeal") || RoomStatus.Equals("ReSet"))
                 {
                     MessageBox.Show("該房間已開始遊戲，無法進入!");
                 }
