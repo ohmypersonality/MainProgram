@@ -10,13 +10,38 @@
     </style>
 
 </head>
+<style>
+
+.Button_Record{
+    position: absolute;
+	top: calc(10% - 75px);
+	left: calc(10% - 50px);
+	height: 150px;
+	width: 350px;
+	padding: 10px;
+	z-index: -1;    
+}
+
+.GridView{
+    position: absolute;
+    top: calc(45% - 75px);
+    left: calc(5% - 50px);
+    height: 150px;
+    width: 1000px;
+    padding: 10px;
+    z-index: 2;        
+}    
+
+</style>
 <body onload="startGame()">
     <input id="Radio1" type="radio" />
     <script>
 
         var myGamePiece;
         var myObstacles = [];
-        var myScore;        
+        var myScore;
+        var recordTimes;
+        
 
         function startGame() {
             myGamePiece = new component(30, 30, "red", 10, 120);
@@ -34,6 +59,7 @@
                 document.body.insertBefore(this.canvas, document.body.childNodes[0]);
                 this.frameNo = 0;
                 this.interval = setInterval(updateGameArea, 20);
+                recordTimes = 0;
             },
             clear: function () {
                 this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -96,6 +122,10 @@
             var x, height, gap, minHeight, maxHeight, minGap, maxGap;
             for (i = 0; i < myObstacles.length; i += 1) {
                 if (myGamePiece.crashWith(myObstacles[i])) {
+                    if (recordTimes==0) {
+                        window.document.getElementById('Button_Record').click();
+                        recordTimes += 1;
+                    }                    
                     return;
                 }
             }
@@ -115,11 +145,12 @@
             for (i = 0; i < myObstacles.length; i += 1) {
                 myObstacles[i].x += -1;
                 myObstacles[i].update();
-            }
-            myScore.text = "SCORE: " + myGameArea.frameNo;
+            }            
+            myScore.text = "SCORE: " + myGameArea.frameNo;            
             myScore.update();
             myGamePiece.newPos();
             myGamePiece.update();
+            setvalue(myGameArea.frameNo);                  
         }
 
         function everyinterval(n) {
@@ -130,10 +161,28 @@
         function accelerate(n) {
             myGamePiece.gravity = n;
         }
+
+        function setvalue(aValue) {
+            var a = document.getElementById("Score");
+            a.value = aValue;
+        }
+
     </script>
     <br>
+    <!--<button onmousedown="startGame()";" >Start</button> --> 
     <button onmousedown="accelerate(-0.2)" onmouseup="accelerate(0.05)">Jump</button>
-    <button onmousedown="startGame()" >ReStart</button>
-</body>
+    <!--<button onmousedown="window.location.reload();" >ReStart</button> -->     
+
+    <form id="form1" runat="server" method="post">
+        <div class="Button_Record"> 
+            <asp:Button ID="Button_Record" runat="server" OnClick="Button_Record_Click" Text="Record"/> 
+        </div>
+        <input type="hidden" id="Score" name="Score" runat="server"/>  
+        <div class="GridView"> 
+            <asp:GridView ID="GridView1" runat="server" Width="600px" CellSpacing="1" OnRowDataBound="GridView1_RawDataBound">
+            </asp:GridView>
+        </div>
+    </form>
+</body>  
 </html>
 

@@ -15,6 +15,27 @@ namespace WebGame
             {
                 Response.Redirect("WebForm_GameSelection");
             }
+
+            Class_Game newGame = new Class_Game();
+            newGame.rank("JumpGame", "score", GridView1);
+        }
+
+        protected void GridView1_RawDataBound(object sender, GridViewRowEventArgs e) //GridView1綁定data source的資料後執行的內容
+        {
+            e.Row.Cells[1].Visible = false; //隱藏game欄位
+            e.Row.Cells[3].Visible = false; //隱藏recordtype欄位          
+
+        }
+
+        protected void Button_Record_Click(object sender, EventArgs e)
+        {
+            int score = Convert.ToInt32(Request.Params["Score"]);
+            if(score>0)
+            {
+                Class_Game newGame = new Class_Game();
+                newGame.record("JumpGame", Convert.ToString(Session["user"]), "score", score);
+                newGame.rank("JumpGame", "score", GridView1);
+            }            
         }
     }
 }

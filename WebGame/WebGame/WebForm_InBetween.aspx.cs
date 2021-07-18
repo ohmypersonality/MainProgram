@@ -107,9 +107,16 @@ namespace WebGame
         {
             if (room_number == null)
             {
-                Class_Game newGame = new Class_Game();
-                newGame.record("InBetween", Convert.ToString(Session["user"]), "score", Convert.ToInt32(Label_NowCoin.Text));
-                newGame.rank("InBetween", "score", GridView1);
+                if(Convert.ToInt32(Label_NowCoin.Text)>0)
+                {
+                    Class_Game newGame = new Class_Game();
+                    newGame.record("InBetween", Convert.ToString(Session["user"]), "score", Convert.ToInt32(Label_NowCoin.Text));
+                    newGame.rank("InBetween", "score", GridView1);
+                }
+                else
+                {
+                    MessageBox.Show("低於0分沒有存檔價值！");
+                }                
             }            
 
             porkInitial();
