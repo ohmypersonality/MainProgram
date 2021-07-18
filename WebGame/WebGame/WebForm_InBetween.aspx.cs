@@ -37,10 +37,7 @@ namespace WebGame
 
                 Label_Hello.Text = "Hello! " + Convert.ToString(Session["user"]);
                 Label_Hello.Font.Size = FontUnit.Larger;
-                Label_Hello.Font.Bold = true;
-
-                Class_Game newGame = new Class_Game();
-                newGame.rank("InBetween", "score", GridView1);
+                Label_Hello.Font.Bold = true;                
 
                 porkInitial();
 
@@ -70,6 +67,12 @@ namespace WebGame
                     Timer_RoomUser.Interval = 500;
                                         
                 }
+            }
+
+            if (room_number == null)
+            {
+                Class_Game newGame = new Class_Game();
+                newGame.rank("InBetween", "score", GridView1);
             }
         }
 
@@ -107,10 +110,11 @@ namespace WebGame
         {
             if (room_number == null)
             {
-                if(Convert.ToInt32(Label_NowCoin.Text)>0)
+                int nowCoin = Convert.ToInt32(Label_NowCoin.Text);
+                if (nowCoin > 0)
                 {
                     Class_Game newGame = new Class_Game();
-                    newGame.record("InBetween", Convert.ToString(Session["user"]), "score", Convert.ToInt32(Label_NowCoin.Text));
+                    newGame.record("InBetween", Convert.ToString(Session["user"]), "score", nowCoin);
                     newGame.rank("InBetween", "score", GridView1);
                 }
                 else
@@ -274,6 +278,9 @@ namespace WebGame
                             ((Image)player[i]).Visible = false;
                             ((Label)player_name[i]).Text = "";
                             ((Label)player_score[i]).Text = "";
+                            Application.Remove(game_name + "_" + room_number + "_status_" + "player" + (i + 1));
+                            Application.Remove(game_name + "_" + room_number + "_action_" + "player" + (i + 1));
+                            Application.Remove(game_name + "_" + room_number + "_pork_" + "player" + (i + 1));
                             Application.Remove(game_name + "_" + room_number + "_score_" + "player" + (i + 1));
                         }
                     }
@@ -583,7 +590,7 @@ namespace WebGame
                 //await ButtonEnabledControl("Processing");
 
                 
-                Application[game_name + "_" + room_number + "_reDeal"] = false;
+                //Application[game_name + "_" + room_number + "_reDeal"] = false;
 
                 ArrayList player = new ArrayList();
                 player.Add(Image_player1);
@@ -1146,7 +1153,7 @@ namespace WebGame
         //本來就有無限房間，只秀出有人的房號
         protected void Load_Room(ListBox room_list, Label user_list, String room_number, String game_name)
         {
-            String test = Convert.ToString(Application["test"]);
+            //String test = Convert.ToString(Application["test"]);
             
             if(Application[game_name + "_exit_room_order"] !=null)
             {
@@ -1324,15 +1331,23 @@ namespace WebGame
 
             if (room_user.Count == 1) //確認該房號的使用者是否只有一人
             {
-                room_user.Clear(); //直接將該房號有哪些人的紀錄清空
+                //room_user.Clear(); //直接將該房號有哪些人的紀錄清空
+                Application.Remove(game_name + "_" + room_number);
+                Application.Remove(game_name + "_" + room_number + "_status");
+                Application.Remove(game_name + "_" + room_number + "_count");                
+                Application.Remove(game_name + "_" + room_number + "_pork_" + "deal1");
+                Application.Remove(game_name + "_" + room_number + "_pork_" + "deal2");
+                Application.Remove("pork" + room_number);
 
                 if (room.Count == 1) //確認只有一間房間有人
                 {
-                    room.Clear(); //直接將哪些房間有人的紀錄清空
+                    //room.Clear(); //直接將哪些房間有人的紀錄清空
+                    Application.Remove(game_name + "_room");                    
                 }
                 else //不只一間房間有人
                 {
                     room.Remove(room_number); //僅刪除該房號有人的紀錄
+                    Application[game_name + "_room"] = room; //更新Application[game_name+"_room"]中的資訊
                 }
             }
             else //該房號的使用者不是只有一人
@@ -1380,13 +1395,12 @@ namespace WebGame
 
                 room.Add(room_number, all_user);
                 Application[game_name + "_" + room_number + "_status_" + "player" + (order + 1)] = "OrderUpdated";
-            }
+                Application[game_name + "_" + room_number] = room_user; //更新Application[game_name + "_" + room_number]中的資訊
+                Application[game_name + "_room"] = room; //更新Application[game_name+"_room"]中的資訊 
 
-            Application[game_name + "_" + room_number] = room_user; //更新Application[game_name + "_" + room_number]中的資訊
-            Application[game_name + "_room"] = room; //更新Application[game_name+"_room"]中的資訊 
-
-            Application[game_name + "_" + room_number + "_count"] = Convert.ToInt32(Application[game_name + "_" + room_number + "_count"]) - 1;
-            Application[game_name + "_" + room_number + "_status"] = "ExitedRoom";
+                Application[game_name + "_" + room_number + "_count"] = Convert.ToInt32(Application[game_name + "_" + room_number + "_count"]) - 1;
+                Application[game_name + "_" + room_number + "_status"] = "ExitedRoom";
+            }            
 
             if (IsButtonClick)
             {
