@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#"  AutoEventWireup="true" CodeBehind="WebForm_GameSelection.aspx.cs" Inherits="WebGame.WebForm_GameSelection" %>
+﻿<%@ Page Title="" Language="C#"  AutoEventWireup="true" CodeBehind="WebForm_GameSelection.aspx.cs" Inherits="WebGame.WebForm_GameSelection"%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -42,11 +42,13 @@
                             </div>
                         </div>
                         <!-- Pricing card enterprise-->
+                        <!--
                         <div class="col-lg-6 col-xl-4">
                             <div class="card">
                                 <asp:ImageButton ID="ImageButton3" runat="server" ImageUrl="~/pic/icon/mora.jpg" OnClick="Button_Click" Height="360px" Width="410px" />
                             </div>
                         </div>
+                            -->
                     </div>
                 </div>
             </section>

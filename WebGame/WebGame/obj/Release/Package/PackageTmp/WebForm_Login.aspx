@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" AutoEventWireup="true" CodeBehind="WebForm_Login.aspx.cs" Inherits="WebGame.WebForm_Login" %>
+﻿<%@ Page Title="" Language="C#" AutoEventWireup="true" CodeBehind="WebForm_Login.aspx.cs" Inherits="WebGame.WebForm_Login"%>
 
 <!DOCTYPE html>
 <html>
