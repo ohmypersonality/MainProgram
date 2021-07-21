@@ -87,7 +87,7 @@ body{
 .GridView{
     position: absolute;
     top: calc(45% - 75px);
-    left: calc(40% - 50px);
+    left: calc(45% - 50px);
     height: 150px;
     width: 1000px;
     padding: 10px;
@@ -168,9 +168,9 @@ body{
                     <asp:Label ID="Label_score2" runat="server" Width="180px" style="color:orange;"></asp:Label>
                     <asp:Label ID="Label_score3" runat="server" Width="180px" style="color:orange;"></asp:Label>
                     <asp:Label ID="Label_score4" runat="server" Width="180px" style="color:orange;"></asp:Label>
-               </div>
+                </div>
                 
-               <div class="Image_poker">
+                <div class="Image_poker">
                     <asp:Image ID="Image_deal1" runat="server" Height="240px" ImageUrl="~/pic/poker/bicycle_backs.jpg" Width="180px" />
                     <asp:Image ID="Image_player1" runat="server" ImageUrl="~/pic/poker/bicycle_backs.jpg" Height="240px" Width="180px" />
                     <asp:Image ID="Image_player2" runat="server" ImageUrl="~/pic/poker/bicycle_backs.jpg" Height="240px" Width="180px" Visible="False"/>
@@ -179,8 +179,7 @@ body{
                     <asp:Image ID="Image_deal2" runat="server" ImageUrl="~/pic/poker/bicycle_backs.jpg" Height="240px" Width="180px" />
                </div> 
                 
-              <div class="updateButtonAndStatus">
-                    
+               <div class="updateButtonAndStatus">                    
                     <asp:Button ID="Button_Start" runat="server" OnClick="Button_Start_Click" Text="Start" />
                     <asp:Button ID="Button_Bet" runat="server" OnClick="Button_PlayerAction_Click" Text="Bet" Enabled="false" />    
                     <asp:Button ID="Button_Pass" runat="server" OnClick="Button_PlayerAction_Click" Text="Pass" Enabled="false" /> 
@@ -194,54 +193,43 @@ body{
                     <asp:Label ID="Label_Count" runat="server" Text="一輪有25場" style="color:orange;"></asp:Label>
                     <br />
                     <br />
-                    <asp:Label ID="Label_Result" runat="server" Text="請點擊Start開局" style="color:orange;"></asp:Label>   
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    
-             </div>
-
+                    <asp:Label ID="Label_Result" runat="server" Text="請點擊Start開局" style="color:orange;"></asp:Label>  
+               </div>
             </ContentTemplate>            
             <Triggers>                
                 <asp:AsyncPostBackTrigger ControlID="Timer_RoomUser" EventName="Tick" />                
             </Triggers>
-        </asp:UpdatePanel>
+        </asp:UpdatePanel> 
 
-        <div class="GridView">
-            <asp:GridView ID="GridView1" runat="server" Width="600px" CellSpacing="1" OnRowDataBound="GridView1_RawDataBound" style="color:white;">
-            </asp:GridView>     
-        </div>
-
-        <div class="OtherObject">
-            
+        <div class="OtherObject">            
             <asp:Label ID="Label1" runat="server" Text="BetCoin: " style="color:white;"></asp:Label>
             <asp:TextBox ID="TextBox_BetCoin" runat="server" Text=1000 OnTextChanged="TextBox_BetCoin_TextChanged"></asp:TextBox>
             <br />
             <br />            
             <asp:Label ID="Label4" runat="server" Text="Battle Room: " style="color:white;"></asp:Label>
-            <asp:TextBox ID="TextBox_Room" runat="server" Text=""></asp:TextBox>            
+            <asp:TextBox ID="TextBox_Room" runat="server" Text=""></asp:TextBox>
         </div> 
-
-        <div class="BattleRoom">
-            <asp:Button ID="Button_EnterRoom" runat="server" OnClick="Button_EnterRoom_Click" Text="Enter Room" /> 
-            <asp:Button ID="Button_ExitRoom" runat="server" OnClick="Button_ExitRoom_Click" Text="Exit Room" Enabled="false" />
-            <br />            
-            <br />
-            <asp:UpdatePanel ID="UpdatePanel1" runat="server"  UpdateMode="Conditional" ChildrenAsTriggers="true">
-                <ContentTemplate>
+        
+        <asp:UpdatePanel ID="UpdatePanel1" runat="server"  UpdateMode="Conditional" ChildrenAsTriggers="true">
+            <ContentTemplate>
+                <div class="BattleRoom">
+                    <asp:Button ID="Button_EnterRoom" runat="server" OnClick="Button_EnterRoom_Click" Text="Enter Room" /> 
+                    <asp:Button ID="Button_ExitRoom" runat="server" OnClick="Button_ExitRoom_Click" Text="Exit Room" Enabled="false" />  
+                    <br />
+                    <br /> 
                     <asp:ListBox ID="ListBox_BattleRoom" runat="server" OnSelectedIndexChanged="ListBox_BattleRoom_SelectedIndexChanged" Width="316px" AutoPostBack="True"></asp:ListBox>
-                </ContentTemplate>
-                <Triggers>
-                    <asp:AsyncPostBackTrigger ControlID="Timer_Status" EventName="Tick" />
-                    <asp:AsyncPostBackTrigger ControlID="Timer_RoomUser" EventName="Tick" />
-                </Triggers>
-            </asp:UpdatePanel>
-            <asp:Label ID="Label5" runat="server" Text="" style="color:white;"></asp:Label>
-        </div>
+                </div>
+                <div class="GridView">
+                    <asp:GridView ID="GridView1" runat="server" Width="600px" CellSpacing="1" OnRowDataBound="GridView1_RawDataBound" style="color:white;">
+                    </asp:GridView>  
+                </div>
+           </ContentTemplate>
+           <Triggers>
+                <asp:AsyncPostBackTrigger ControlID="Timer_Status" EventName="Tick" />
+                <asp:AsyncPostBackTrigger ControlID="Timer_RoomUser" EventName="Tick" />
+           </Triggers>
+        </asp:UpdatePanel>                
+        
     
         <asp:Timer ID="Timer_Status" runat="server" OnTick="Timer_Status_Tick">
         </asp:Timer>

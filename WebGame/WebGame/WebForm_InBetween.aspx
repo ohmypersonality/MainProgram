@@ -132,15 +132,10 @@ body{
   
 <body>   
     <div class="body"></div>
-    <script>
-        //window.onload = function () {
-        //    window.open("WebForm_Logout.aspx");
-        //    return "Are you sure to close?";
-        //}
-
-        //window.onbeforeunload = function () {
-        //    return "";    
-        //}
+    <script> 
+        window.onbeforeunload = function () {           
+                window.document.getElementById('Button_ExitRoom').click();
+        }
 </script>
     <!--在html中使用伺服器控制項，一定要用form標籤，而且只能用一次-->
     <form id="form1" runat="server" method="post"> 
