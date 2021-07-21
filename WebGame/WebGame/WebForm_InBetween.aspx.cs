@@ -419,9 +419,8 @@ namespace WebGame
                               
                 String room_status = Convert.ToString(Application[game_name + "_" + room_number + "_status"]);
 
-                if (user.Equals("deal1") && room_status.Equals("GameStart"))
-                {                    
-                    Application[game_name + "_" + room_number + "_status"] = "RandomDeal_First";
+                if (user.Equals("deal1"))
+                {  
                     pork = (ArrayList)Application["pork" + room_number];
                     n = pork.Count;
                     m = random.Next(1, n + 1) - 1;
@@ -433,11 +432,9 @@ namespace WebGame
                         pork.RemoveAt(m);
                         Application["pork" + room_number] = pork;
                     }
-
                 }
-                else if(user.Equals("deal2") && room_status.Equals("RandomDeal_First"))
-                {
-                    Application[game_name + "_" + room_number + "_status"] = "RandomDeal";
+                else if(user.Equals("deal2"))
+                {                    
                     pork = (ArrayList)Application["pork" + room_number];
                     n = pork.Count;
                     m = random.Next(1, n + 1) - 1;
@@ -450,7 +447,6 @@ namespace WebGame
                         Application["pork" + room_number] = pork;
                         Application["pork2" + room_number] = pork;
                     }
-
                 }
                 else if(!user.Equals("deal1") && !user.Equals("deal2"))
                 {
@@ -560,7 +556,7 @@ namespace WebGame
                
                 String room_status = Convert.ToString(Application[game_name + "_" + room_number + "_status"]);
 
-                
+                /*
                 while (!room_status.Equals("RandomDeal"))
                 {
                     if(room_status.Equals("GameStart"))
@@ -572,7 +568,23 @@ namespace WebGame
 
                     room_status = Convert.ToString(Application[game_name + "_" + room_number + "_status"]);
                 }
-               
+                */
+                while (!room_status.Equals("RandomDeal"))
+                {
+                    if (room_status.Equals("GameStart"))
+                    {
+                        Application[game_name + "_" + room_number + "_status"] = "RandomDeal_First";
+                        RandomPork(room_number, "deal1", Image_deal1);
+                        await Task.Delay(20);
+                    }
+                    else if (room_status.Equals("RandomDeal_First"))
+                    {
+                        Application[game_name + "_" + room_number + "_status"] = "RandomDeal";
+                        await Task.Delay(20);
+                        RandomPork(room_number, "deal2", Image_deal2);
+                    }
+                    room_status = Convert.ToString(Application[game_name + "_" + room_number + "_status"]);
+                }
 
                 Application[game_name + "_" + room_number + "_status_" + "player" + (order + 1)] = "Dealed";
 
@@ -1192,14 +1204,15 @@ namespace WebGame
                 {
                     Label_Result.Text = "In door! You Win!";
                     newCoin = Convert.ToInt32(Application[game_name + "_" + room_number + "_score_" + "player" + (order + 1)]) + Convert.ToInt32(TextBox_BetCoin.Text);
-                }               
-               
+                }
 
+                /*
                 String ApplicationName = game_name + "_" + room_number + "_action_" + "player";
                 for (int i = 0; i <= count - 1; i++)
                 {
                     Application[ApplicationName + (i + 1)] = "";
                 }
+                */
 
                 if (newCoin <= 0)
                 {
@@ -1230,6 +1243,12 @@ namespace WebGame
                     Timer_RoomUser.Enabled = true;
                     Timer_RoomUser.Interval = 500;
                     Application[game_name + "_" + room_number + "_status"] = "ReSet";                 
+                }
+
+                String ApplicationName = game_name + "_" + room_number + "_action_" + "player";
+                for (int i = 0; i <= count - 1; i++)
+                {
+                    Application[ApplicationName + (i + 1)] = "";
                 }
 
                 Button_Record.Enabled = true;
