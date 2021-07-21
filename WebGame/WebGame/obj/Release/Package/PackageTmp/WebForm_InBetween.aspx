@@ -45,7 +45,7 @@ body{
 	height: 150px;
 	width: 350px;
 	padding: 10px;
-	z-index: 2;    
+	z-index: 1;    
 }
 
 .Label_player{
@@ -126,29 +126,54 @@ body{
 	z-index: 2;   
 }
 
+.ChatInput{
+    position: absolute;
+    top: calc(45% - 75px);
+    left: calc(45% - 50px);
+    height: 150px;
+    width: 1000px;
+    padding: 10px;
+    z-index: 3;
+}
+
+.ChatButton{
+    position: absolute;
+    top: calc(49% - 75px);
+    left: calc(45% - 50px);
+    height: 150px;
+    width: 1000px;
+    padding: 10px;
+    z-index: 3;
+}
+
+.ChatList{
+    position: absolute;
+    top: calc(53% - 75px);
+    left: calc(45% - 50px);
+    height: 150px;
+    width: 1000px;
+    padding: 10px;
+    z-index: 2;
+} 
+
 
 </style>
 
   
 <body>   
     <div class="body"></div>
-    <script>
-        //window.onload = function () {
-        //    window.open("WebForm_Logout.aspx");
-        //    return "Are you sure to close?";
-        //}
-
-        //window.onbeforeunload = function () {
-        //    return "";    
-        //}
-</script>
+    <script> 
+        window.onbeforeunload = function () {
+            window.document.getElementById('Button_WindowsClose').click();
+        }
+    </script>
     <!--在html中使用伺服器控制項，一定要用form標籤，而且只能用一次-->
     <form id="form1" runat="server" method="post"> 
         <!--在html中使用UpdatePanel，一定要前面加這一行，而且只能用一次-->
         <asp:ScriptManager ID="ScriptManager1" runat="server"/>  
         <!--以class標籤來使用區塊排版格式，該class在前面的style標籤中定義-->
         <div class="Label_header">  
-            <asp:Label ID="Label_Hello" runat="server" Text="" style="color:white;"></asp:Label>
+            <asp:Label ID="Label_Hello" runat="server" Text="" style="color:white;"></asp:Label>            
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </div>         
                   
@@ -209,9 +234,22 @@ body{
             <asp:Label ID="Label4" runat="server" Text="Battle Room: " style="color:white;"></asp:Label>
             <asp:TextBox ID="TextBox_Room" runat="server" Text=""></asp:TextBox>
         </div> 
-        
+        <div class="ChatInput"> 
+            <asp:Label ID="Label2" runat="server" Text="Message: " style="color:white;"></asp:Label>
+            <asp:TextBox ID="TextBox_Chat" runat="server" Text=""></asp:TextBox>
+        </div> 
+
         <asp:UpdatePanel ID="UpdatePanel1" runat="server"  UpdateMode="Conditional" ChildrenAsTriggers="true">
             <ContentTemplate>
+                <div class="Label_header">
+                    <br />
+                    <br />   
+                    <br />
+                    <asp:Button ID="Button_WindowsClose" runat="server" OnClick="Button_ExitRoom_Click" Text="Windows Close"/>
+                </div>
+                <div class="ChatButton">
+                    <asp:Button ID="Button_Send" runat="server" OnClick="Button_SendMessage_Click" Text="Send Message" /> 
+                </div> 
                 <div class="BattleRoom">
                     <asp:Button ID="Button_EnterRoom" runat="server" OnClick="Button_EnterRoom_Click" Text="Enter Room" /> 
                     <asp:Button ID="Button_ExitRoom" runat="server" OnClick="Button_ExitRoom_Click" Text="Exit Room" Enabled="false" />  
@@ -222,20 +260,33 @@ body{
                 <div class="GridView">
                     <asp:GridView ID="GridView1" runat="server" Width="600px" CellSpacing="1" OnRowDataBound="GridView1_RawDataBound" style="color:white;">
                     </asp:GridView>  
-                </div>
+                </div>                
            </ContentTemplate>
            <Triggers>
                 <asp:AsyncPostBackTrigger ControlID="Timer_Status" EventName="Tick" />
-                <asp:AsyncPostBackTrigger ControlID="Timer_RoomUser" EventName="Tick" />
+                <asp:AsyncPostBackTrigger ControlID="Timer_RoomUser" EventName="Tick" />                
            </Triggers>
         </asp:UpdatePanel>                
         
+        <asp:UpdatePanel ID="UpdatePanel3" runat="server"  UpdateMode="Conditional" ChildrenAsTriggers="true">
+            <ContentTemplate>
+                <div class="ChatList">                     
+                    <asp:Label ID="Label_Message" runat="server" Height="180px" Width="500px" style="color:white;overflow:auto; display:flex; flex-direction:column-reverse;"></asp:Label>                    
+                </div>
+            </ContentTemplate>
+           <Triggers>                
+                <asp:AsyncPostBackTrigger ControlID="Timer_RoomChat" EventName="Tick" />
+           </Triggers>
+        </asp:UpdatePanel>  
     
         <asp:Timer ID="Timer_Status" runat="server" OnTick="Timer_Status_Tick">
         </asp:Timer>
 
         <asp:Timer ID="Timer_RoomUser" runat="server" OnTick="Timer_RoomUser_Tick">
-        </asp:Timer>        
+        </asp:Timer>     
+        
+        <asp:Timer ID="Timer_RoomChat" runat="server" OnTick="Timer_RoomChat_Tick">
+        </asp:Timer> 
         
     </form> 
 
