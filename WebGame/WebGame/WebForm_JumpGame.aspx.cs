@@ -20,6 +20,11 @@ namespace WebGame
             newGame.rank("JumpGame", "score", GridView1);
         }
 
+        protected void Button_Logout_Click(object sender, EventArgs e)
+        {           
+            Response.Redirect("WebForm_GameSelection", false);
+        }
+
         protected void GridView1_RawDataBound(object sender, GridViewRowEventArgs e) //GridView1綁定data source的資料後執行的內容
         {
             e.Row.Cells[1].Visible = false; //隱藏game欄位

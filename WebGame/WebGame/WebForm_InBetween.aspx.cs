@@ -103,6 +103,20 @@ namespace WebGame
 
         }
 
+        protected void Button_Logout_Click(object sender, EventArgs e)
+        {
+            if (room_number != null) //若有房號，則在跳轉之前需先執行ExitRoom
+            {
+                //String user_name = Convert.ToString(Session["user"]);
+                int max_user = 4;
+                int order = Convert.ToInt32(Session["order"]);
+                Application[game_name + "_exit_room_order"] = room_number + ":" + order;
+                Timer_RoomUser.Enabled = false;
+                Application[game_name + "_" + room_number + "_status"] = "ExitRoom";
+                ExitRoom(room_number, game_name, order, max_user, true);
+            }
+            Response.Redirect("WebForm_GameSelection", false);
+        }
 
 
         protected async void Button_Start_Click(object sender, EventArgs e) 

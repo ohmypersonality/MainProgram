@@ -48,29 +48,39 @@ body{
 	z-index: 1;    
 }
 
+.Logout{
+    position: absolute;
+	top: calc(10% - 75px);
+	left: calc(80% - 50px);
+	height: 150px;
+	width: 350px;
+	padding: 10px;
+	z-index: 1;    
+}
+
 .Label_player{
     position: absolute;
 	top: calc(10% - 75px);
-	left: calc(20% - 50px);
+	left: calc(10% - 50px);
 	height: 150px;
 	width: 350px;
 	padding: 10px;
 	z-index: 2;
     display: grid;
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns:repeat(6,1fr);
     grid-gap:3px;
 }
 
 .Label_score{
     position: absolute;
 	top: calc(12% - 75px);
-	left: calc(20% - 50px);
+	left: calc(10% - 50px);
 	height: 150px;
 	width: 350px;
 	padding: 10px;
 	z-index: 2;
     display: grid;
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns:repeat(6,1fr);
     grid-gap:3px;
 }
 
@@ -79,9 +89,12 @@ body{
 	top: calc(15% - 75px);
 	left: calc(10% - 50px);
 	height: 150px;
-	width: 6000px;
+	width: 350px;
 	padding: 10px;
-	z-index: 2;   
+	z-index: 2;
+    display: grid;
+    grid-template-columns:repeat(6,1fr);
+    grid-gap:3px;
 }
 
 .GridView{
@@ -175,24 +188,31 @@ body{
         <div class="Label_header">  
             <asp:Label ID="Label_Hello" runat="server" Text="" style="color:white;"></asp:Label>            
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </div>         
+        </div>        
+        <div class="Logout"> 
+            <asp:Button ID="Button_Logout" runat="server" OnClick="Button_Logout_Click" Text="Logout" />
+        </div>
                   
         <!--使用UpdatePanel之後，只有內部的控制項會受到Timer影響-->
         <!--在UpdatePanel的Trigger屬性中加入Timer的Tick事件-->
         <asp:UpdatePanel ID="UpdatePanel2" runat="server"  UpdateMode="Conditional" ChildrenAsTriggers="true"> 
             <ContentTemplate>                
                 <div class="Label_player">
+                    <asp:Label ID="Label5" runat="server" Width="180px" style="color:orange;"></asp:Label>
                     <asp:Label ID="Label_player1" runat="server" Width="180px" style="color:orange;"></asp:Label>
                     <asp:Label ID="Label_player2" runat="server" Width="180px" style="color:orange;"></asp:Label>
                     <asp:Label ID="Label_player3" runat="server" Width="180px" style="color:orange;"></asp:Label>
                     <asp:Label ID="Label_player4" runat="server" Width="180px" style="color:orange;"></asp:Label>
+                    <asp:Label ID="Label6" runat="server" Width="180px" style="color:orange;"></asp:Label>
                 </div>
 
                 <div class="Label_score">
+                    <asp:Label ID="Label7" runat="server" Width="180px" style="color:orange;"></asp:Label>
                     <asp:Label ID="Label_score1" runat="server" Width="180px" style="color:orange;"></asp:Label>
                     <asp:Label ID="Label_score2" runat="server" Width="180px" style="color:orange;"></asp:Label>
                     <asp:Label ID="Label_score3" runat="server" Width="180px" style="color:orange;"></asp:Label>
                     <asp:Label ID="Label_score4" runat="server" Width="180px" style="color:orange;"></asp:Label>
+                    <asp:Label ID="Label8" runat="server" Width="180px" style="color:orange;"></asp:Label>
                 </div>
                 
                 <div class="Image_poker">
@@ -297,4 +317,4 @@ body{
 
 <body>
 
-</html>
+</html>tml>
