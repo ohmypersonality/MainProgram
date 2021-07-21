@@ -12,6 +12,16 @@
 </head>
 <style>
 
+.Logout{
+    position: absolute;
+	top: calc(10% - 75px);
+	left: calc(80% - 50px);
+	height: 150px;
+	width: 350px;
+	padding: 10px;
+	z-index: 1;    
+}
+
 .Button_Record{
     position: absolute;
 	top: calc(10% - 75px);
@@ -174,6 +184,9 @@
     <!--<button onmousedown="window.location.reload();" >ReStart</button> -->     
 
     <form id="form1" runat="server" method="post">
+        <div class="Logout"> 
+            <asp:Button ID="Button_Logout" runat="server" OnClick="Button_Logout_Click" Text="Logout" />
+        </div>
         <div class="Button_Record"> 
             <asp:Button ID="Button_Record" runat="server" OnClick="Button_Record_Click" Text="Record"/> 
         </div>
