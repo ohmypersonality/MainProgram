@@ -45,27 +45,47 @@ namespace WebGame
                 if (room_number == null)
                 {
                     Button_Record.Text = "Record and ReSet";
-                    ListBox_BattleRoom.Visible = true;
-                    GridView1.Visible = true;
                     Button_ExitRoom.Enabled = false;
                     Button_EnterRoom.Enabled = true;
+                    Button_Send.Visible = false;
+
+                    TextBox_Chat.Visible = false;
+
+                    Label_Message.Visible = false;
+                    Label2.Text = "";
+
+                    ListBox_BattleRoom.Visible = true;
+                    GridView1.Visible = true;
+                    
                     Timer_Status.Enabled = true;
                     Timer_Status.Interval = 500;
+                    Timer_RoomUser.Enabled = false;
+                    Timer_RoomChat.Enabled = false;
+
                     await roomMonitor();
                 }
                 else
                 {
                     Button_Record.Text = "ReSet";
-                    TextBox_Room.Text = room_number;
-                    ListBox_BattleRoom.Visible = false;
-                    GridView1.Visible = false;
                     Button_ExitRoom.Enabled = true;
                     Button_EnterRoom.Enabled = false;
-                    Timer_Status.Enabled = false;                    
+                    //Button_Send.Visible = true;
+                    Button_Send.Enabled = false;
+
+                    //TextBox_Chat.Visible = true;
+                    TextBox_Room.Text = room_number;
+
+                    //Label_Message.Visible = true;
+                    Label2.Text = "Message: ";
+
+                    ListBox_BattleRoom.Visible = false;
+                    GridView1.Visible = false;
                     
+                    Timer_Status.Enabled = false;
                     Timer_RoomUser.Enabled = true;
                     Timer_RoomUser.Interval = 500;
-                                        
+                    //Timer_RoomChat.Enabled = true;
+                    //Timer_RoomChat.Interval = 500;
                 }
             }
 
@@ -172,9 +192,26 @@ namespace WebGame
                 Application[game_name + "_exit_room_order"] = room_number + ":" + order;
                 Timer_RoomUser.Enabled = false;
                 Application[game_name + "_" + room_number + "_status"] = "ExitRoom";
-                ExitRoom(room_number, game_name, order, max_user);
+                ExitRoom(room_number, game_name, order, max_user,true);
             }
         }
+
+        protected async void Button_SendMessage_Click(object sender, EventArgs e)
+        {
+            await Task.Run(() => { _ = Load(20); });
+            if (TextBox_Chat.Text.Trim()!="")
+            {
+                if(Application[game_name + "_" + room_number + "_chat"]==null)
+                {
+                    Application[game_name + "_" + room_number + "_chat"] = user_name + ":" + TextBox_Chat.Text;
+                }
+                else
+                {
+                    Application[game_name + "_" + room_number + "_chat"] = Convert.ToString(Application[game_name + "_" + room_number + "_chat"]) + "<br>" + user_name + ":" + TextBox_Chat.Text;
+                }                
+            }            
+        }
+
 
         protected void Timer_Status_Tick(object sender, EventArgs e)
         {
@@ -187,6 +224,11 @@ namespace WebGame
         protected async void Timer_RoomUser_Tick(object sender, EventArgs e)
         {
             await roomMonitor();
+        }
+
+        protected async void Timer_RoomChat_Tick(object sender, EventArgs e)
+        {
+            await messageMonitor();
         }
 
         #endregion
@@ -286,6 +328,15 @@ namespace WebGame
                     }
                 }
             }
+        }
+
+        protected async Task messageMonitor()
+        {
+            await Task.Run(() => { _ = Load(20); });
+            if(Application[game_name + "_" + room_number + "_chat"]!=null)
+            {
+                Label_Message.Text = Convert.ToString(Application[game_name + "_" + room_number + "_chat"]);                
+            }            
         }
 
         protected void porkInitial() //將撲克牌牌堆初始化
@@ -498,7 +549,10 @@ namespace WebGame
                 }
 
                 Button_ExitRoom.Enabled = false;
-                Timer_RoomUser.Enabled = false;                
+                Timer_RoomUser.Enabled = false;
+                Timer_RoomChat.Enabled = true;
+                Timer_RoomChat.Interval = 500;
+                Button_Send.Enabled = true;
 
                 //ArrayList room_user = (ArrayList)Application[game_name + "_" + room_number];
                 Dictionary<int, String> room_user = (Dictionary<int, String>)Application[game_name + "_" + room_number];
@@ -646,6 +700,8 @@ namespace WebGame
                         Label_Count.Font.Size = FontUnit.Larger;
                         Label_Count.Font.Bold = true;
                         Button_ExitRoom.Enabled = true;
+                        Button_Send.Enabled = false;
+                        Timer_RoomChat.Enabled = false;
                         Application[game_name + "_" + room_number + "_status"] = "NewGame";
                     }
 
@@ -1041,6 +1097,8 @@ namespace WebGame
                 Label_Count.Font.Size = FontUnit.Larger;
                 Label_Count.Font.Bold = true;
                 Button_ExitRoom.Enabled = true;
+                Button_Send.Enabled = false;
+                Timer_RoomChat.Enabled = false;
                 Application[game_name + "_" + room_number + "_status"] = "NewGame";
             }
 
@@ -1344,7 +1402,7 @@ namespace WebGame
                     if (last_room_number != null) //若有房號，則在跳轉之前需先執行ExitRoom
                     {
                         int order = Convert.ToInt32(Session["order"]);
-                        ExitRoom(last_room_number, game_name, order, max_user);
+                        ExitRoom(last_room_number, game_name, order, max_user,true);
                     }
 
                     //Session["IsInRoom"] = true;
@@ -1360,7 +1418,7 @@ namespace WebGame
         }
 
 
-        protected void ExitRoom(String room_number, String game_name, int order, int max_user, Boolean IsButtonClick = true)
+        protected void ExitRoom(String room_number, String game_name, int order, int max_user, Boolean IsButtonClick = false)
         {
             Application[game_name + "_" + room_number + "_status"] = "ExitingRoom";
             Dictionary<String, String> room = (Dictionary<String, String>)Application[game_name + "_room"];//讀出哪些房間有人的紀錄
@@ -1372,7 +1430,8 @@ namespace WebGame
                 room_user.Clear(); //直接將該房號有哪些人的紀錄清空
                 Application.Remove(game_name + "_" + room_number);
                 Application.Remove(game_name + "_" + room_number + "_status");
-                Application.Remove(game_name + "_" + room_number + "_count");                
+                Application.Remove(game_name + "_" + room_number + "_count");
+                Application.Remove(game_name + "_" + room_number + "_chat");
                 Application.Remove(game_name + "_" + room_number + "_pork_" + "deal1");
                 Application.Remove(game_name + "_" + room_number + "_pork_" + "deal2");
                 Application.Remove("pork" + room_number);
@@ -1389,7 +1448,7 @@ namespace WebGame
                     Application[game_name + "_room"] = room; //更新Application[game_name+"_room"]中的資訊
                 }
             }
-            else //該房號的使用者不是只有一人
+            else if (room_user.Count >1) //該房號的使用者不是只有一人
             {
                 //room_user.Remove(user_name); //僅刪除該房號有此人的紀錄
                 room_user.Remove(order);

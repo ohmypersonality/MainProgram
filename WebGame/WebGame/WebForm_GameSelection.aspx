@@ -18,9 +18,9 @@
     <body class="d-flex flex-column" >
     <form id="form1" runat="server" method="post"> 
         <main class="flex-shrink-0">
-
-            <!-- Pricing section-->
-            <section class="bg-light py-5">
+            <div class="body">
+            <!-- Pricing section
+            <section class="bg-light py-5">-->
                 <div class="container px-5 my-5">
                     <div class="text-center mb-5">
                         <h1 class="fw-bolder">Play now</h1>
@@ -35,11 +35,9 @@
                         </div>
                         <!-- Pricing card pro-->
                         <div class="col-lg-6 col-xl-4">
-                            <div class="card mb-5 mb-xl-0">
 
                                    <asp:ImageButton ID="ImageButton2" runat="server" ImageUrl="~/pic/icon/JumpGame.jpg" OnClick="Button_Click" Height="360px" Width="410px" />
 
-                            </div>
                         </div>
                         <!-- Pricing card enterprise-->
                         <!--
@@ -51,7 +49,8 @@
                             -->
                     </div>
                 </div>
-            </section>
+            <!--</section>-->
+            </div>
         </main>
 
             </form> 
