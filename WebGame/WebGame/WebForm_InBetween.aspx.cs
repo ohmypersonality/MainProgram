@@ -217,11 +217,11 @@ namespace WebGame
             {
                 if(Application[game_name + "_" + room_number + "_chat"]==null)
                 {
-                    Application[game_name + "_" + room_number + "_chat"] = user_name + ":" + TextBox_Chat.Text;
+                    Application[game_name + "_" + room_number + "_chat"] = System.DateTime.Now.ToString("MM/d HH:mm:ss") + " " + user_name + " : " + TextBox_Chat.Text;
                 }
                 else
                 {
-                    Application[game_name + "_" + room_number + "_chat"] = Convert.ToString(Application[game_name + "_" + room_number + "_chat"]) + "<br>" + user_name + ":" + TextBox_Chat.Text;
+                    Application[game_name + "_" + room_number + "_chat"] = Convert.ToString(Application[game_name + "_" + room_number + "_chat"]) + "<br>" + System.DateTime.Now.ToString("MM/d HH:mm:ss") + " " + user_name + " : " + TextBox_Chat.Text;
                 }                
             }            
         }
@@ -301,45 +301,49 @@ namespace WebGame
                     //ArrayList room_user = (ArrayList)Application[game_name + "_" + room_number];
                     Dictionary<int, String> room_user = (Dictionary<int, String>)Application[game_name + "_" + room_number];
                     //int order = room_user.IndexOf(user_name);
-                    int order = Convert.ToInt32(Session["order"]);
-                    int count = room_user.Count;
-                    int initial_score = 50000;
-
-                    //Session["order"] = order;
-
-                    for (int i = 0; i <= 3; i++)
+                    
+                    if(room_user!=null)
                     {
-                        if (i <= count - 1)
+                        int order = Convert.ToInt32(Session["order"]);
+                        int count = room_user.Count;
+                        int initial_score = 50000;
+
+                        //Session["order"] = order;
+
+                        for (int i = 0; i <= 3; i++)
                         {
-                            ((Image)player[i]).Visible = true;
-
-                            if (Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)] == null)
+                            if (i <= count - 1)
                             {
-                                Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)] = initial_score;
-                            }
-                            ((Label)player_score[i]).Text = Convert.ToString(Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)]);
+                                ((Image)player[i]).Visible = true;
 
-                            if (i == order)
-                            {
-                                ((Label)player_name[i]).Text = Convert.ToString(room_user[i]) + " (me)";
-                                Label_NowCoin.Text = ((Label)player_score[i]).Text;
+                                if (Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)] == null)
+                                {
+                                    Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)] = initial_score;
+                                }
+                                ((Label)player_score[i]).Text = Convert.ToString(Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)]);
+
+                                if (i == order)
+                                {
+                                    ((Label)player_name[i]).Text = Convert.ToString(room_user[i]) + " (me)";
+                                    Label_NowCoin.Text = ((Label)player_score[i]).Text;
+                                }
+                                else
+                                {
+                                    ((Label)player_name[i]).Text = Convert.ToString(room_user[i]);
+                                }
                             }
                             else
                             {
-                                ((Label)player_name[i]).Text = Convert.ToString(room_user[i]);
-                            }                       
+                                ((Image)player[i]).Visible = false;
+                                ((Label)player_name[i]).Text = "";
+                                ((Label)player_score[i]).Text = "";
+                                Application.Remove(game_name + "_" + room_number + "_status_" + "player" + (i + 1));
+                                Application.Remove(game_name + "_" + room_number + "_action_" + "player" + (i + 1));
+                                Application.Remove(game_name + "_" + room_number + "_pork_" + "player" + (i + 1));
+                                Application.Remove(game_name + "_" + room_number + "_score_" + "player" + (i + 1));
+                            }
                         }
-                        else
-                        {
-                            ((Image)player[i]).Visible = false;
-                            ((Label)player_name[i]).Text = "";
-                            ((Label)player_score[i]).Text = "";
-                            Application.Remove(game_name + "_" + room_number + "_status_" + "player" + (i + 1));
-                            Application.Remove(game_name + "_" + room_number + "_action_" + "player" + (i + 1));
-                            Application.Remove(game_name + "_" + room_number + "_pork_" + "player" + (i + 1));
-                            Application.Remove(game_name + "_" + room_number + "_score_" + "player" + (i + 1));
-                        }
-                    }
+                    }                    
                 }
             }
         }
@@ -1458,85 +1462,89 @@ namespace WebGame
             //ArrayList room_user = (ArrayList)Application[game_name + "_" + room_number];//讀出該房號有哪些人的紀錄
             Dictionary<int, String> room_user = (Dictionary<int, String>)Application[game_name + "_" + room_number];
 
-            if (room_user.Count == 1) //確認該房號的使用者是否只有一人
+            if(room_user!=null)
             {
-                room_user.Clear(); //直接將該房號有哪些人的紀錄清空
-                Application.Remove(game_name + "_" + room_number);
-                Application.Remove(game_name + "_" + room_number + "_status");
-                Application.Remove(game_name + "_" + room_number + "_count");
-                Application.Remove(game_name + "_" + room_number + "_chat");
-                Application.Remove(game_name + "_" + room_number + "_pork_" + "deal1");
-                Application.Remove(game_name + "_" + room_number + "_pork_" + "deal2");
-                Application.Remove("pork" + room_number);
-                Application.Remove("pork2" + room_number);
+                if (room_user.Count == 1) //確認該房號的使用者是否只有一人
+                {
+                    room_user.Clear(); //直接將該房號有哪些人的紀錄清空
+                    Application.Remove(game_name + "_" + room_number);
+                    Application.Remove(game_name + "_" + room_number + "_status");
+                    Application.Remove(game_name + "_" + room_number + "_count");
+                    Application.Remove(game_name + "_" + room_number + "_chat");
+                    Application.Remove(game_name + "_" + room_number + "_pork_" + "deal1");
+                    Application.Remove(game_name + "_" + room_number + "_pork_" + "deal2");
+                    Application.Remove("pork" + room_number);
+                    Application.Remove("pork2" + room_number);
 
-                if (room.Count == 1) //確認只有一間房間有人
-                {
-                    room.Clear(); //直接將哪些房間有人的紀錄清空
-                    Application.Remove(game_name + "_room");                    
+                    if (room.Count == 1) //確認只有一間房間有人
+                    {
+                        room.Clear(); //直接將哪些房間有人的紀錄清空
+                        Application.Remove(game_name + "_room");
+                    }
+                    else //不只一間房間有人
+                    {
+                        room.Remove(room_number); //僅刪除該房號有人的紀錄
+                        Application[game_name + "_room"] = room; //更新Application[game_name+"_room"]中的資訊
+                    }
                 }
-                else //不只一間房間有人
+                else if (room_user.Count > 1) //該房號的使用者不是只有一人
                 {
-                    room.Remove(room_number); //僅刪除該房號有人的紀錄
-                    Application[game_name + "_room"] = room; //更新Application[game_name+"_room"]中的資訊
+                    //room_user.Remove(user_name); //僅刪除該房號有此人的紀錄
+                    room_user.Remove(order);
+                    String all_user = "";
+                    String temp_user = "";
+                    /*
+                    for (int i = 0; i <= room_user.Count - 1; i++) //需用for loop將所有使用者串成一個字串，再丟入all_user中
+                    {
+                        if (i == 0)
+                        {
+                            all_user = "(" + room_user.Count + "/" + max_user + ")" + Convert.ToString(room_user[i]);
+                        }
+                        else
+                        {
+                            all_user += "," + Convert.ToString(room_user[i]);
+                        }
+                    }
+                    */
+                    for (int i = 0; i <= room_user.Count - 1; i++) //需用for loop將所有使用者串成一個字串，再丟入all_user中
+                    {
+                        if (i >= order)
+                        {
+                            temp_user = room_user[i + 1];
+                            room_user.Remove(i + 1);
+                            room_user.Add(i, temp_user);
+                        }
+
+                        if (i == 0)
+                        {
+                            all_user = "(" + room_user.Count + "/" + max_user + ")" + Convert.ToString(room_user[i]);
+                        }
+                        else
+                        {
+                            all_user += "," + Convert.ToString(room_user[i]);
+                        }
+                    }
+
+                    if (room.ContainsKey(room_number)) //確認讀出的紀錄中，正要進入的房間是否有紀錄(理論上 Application[game_name + "_" + room_number] 有東西就應該有紀錄)
+                    {
+                        room.Remove(room_number); //先刪除已存在的紀錄(後面新增進入房間的使用者後再重新加入)
+                    }
+
+                    room.Add(room_number, all_user);
+                    Application[game_name + "_" + room_number + "_status_" + "player" + (order + 1)] = "OrderUpdated";
+                    Application[game_name + "_" + room_number] = room_user; //更新Application[game_name + "_" + room_number]中的資訊
+                    Application[game_name + "_room"] = room; //更新Application[game_name+"_room"]中的資訊 
+
+                    Application[game_name + "_" + room_number + "_count"] = Convert.ToInt32(Application[game_name + "_" + room_number + "_count"]) - 1;
+                    Application[game_name + "_" + room_number + "_status"] = "ExitedRoom";
+                }
+
+                if (IsButtonClick)
+                {
+                    Response.Redirect(game_name);
                 }
             }
-            else if (room_user.Count >1) //該房號的使用者不是只有一人
-            {
-                //room_user.Remove(user_name); //僅刪除該房號有此人的紀錄
-                room_user.Remove(order);
-                String all_user = "";
-                String temp_user = "";
-                /*
-                for (int i = 0; i <= room_user.Count - 1; i++) //需用for loop將所有使用者串成一個字串，再丟入all_user中
-                {
-                    if (i == 0)
-                    {
-                        all_user = "(" + room_user.Count + "/" + max_user + ")" + Convert.ToString(room_user[i]);
-                    }
-                    else
-                    {
-                        all_user += "," + Convert.ToString(room_user[i]);
-                    }
-                }
-                */
-                for (int i = 0; i <= room_user.Count - 1; i++) //需用for loop將所有使用者串成一個字串，再丟入all_user中
-                {
-                    if (i >= order)
-                    {
-                        temp_user = room_user[i + 1];
-                        room_user.Remove(i + 1);
-                        room_user.Add(i, temp_user);
-                    }
-
-                    if (i == 0)
-                    {
-                        all_user = "(" + room_user.Count + "/" + max_user + ")" + Convert.ToString(room_user[i]);
-                    }
-                    else
-                    {
-                        all_user += "," + Convert.ToString(room_user[i]);
-                    }
-                }
-
-                if (room.ContainsKey(room_number)) //確認讀出的紀錄中，正要進入的房間是否有紀錄(理論上 Application[game_name + "_" + room_number] 有東西就應該有紀錄)
-                {
-                    room.Remove(room_number); //先刪除已存在的紀錄(後面新增進入房間的使用者後再重新加入)
-                }
-
-                room.Add(room_number, all_user);
-                Application[game_name + "_" + room_number + "_status_" + "player" + (order + 1)] = "OrderUpdated";
-                Application[game_name + "_" + room_number] = room_user; //更新Application[game_name + "_" + room_number]中的資訊
-                Application[game_name + "_room"] = room; //更新Application[game_name+"_room"]中的資訊 
-
-                Application[game_name + "_" + room_number + "_count"] = Convert.ToInt32(Application[game_name + "_" + room_number + "_count"]) - 1;
-                Application[game_name + "_" + room_number + "_status"] = "ExitedRoom";
-            }            
-
-            if (IsButtonClick)
-            {
-                Response.Redirect(game_name);
-            }
+            
         }
 
         protected async Task updateOrder()
