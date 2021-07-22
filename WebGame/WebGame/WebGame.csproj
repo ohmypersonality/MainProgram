@@ -121,6 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="About.aspx" />
+    <Content Include="audio\bump.mp3" />
     <Content Include="Contact.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -143,8 +144,10 @@
     <Content Include="index.html" />
     <Content Include="js\prefixfree.min.js" />
     <Content Include="pic\icon\InBetween.png" />
-    <Content Include="pic\icon\JumpGame.JPG" />
+    <Content Include="pic\icon\jumpGame.JPG" />
     <Content Include="pic\icon\mora.jpg" />
+    <Content Include="pic\jumper\background.jpeg" />
+    <Content Include="pic\jumper\flying_bat.jpeg" />
     <Content Include="pic\mora\paper.png" />
     <Content Include="pic\mora\scissors.png" />
     <Content Include="pic\mora\stone.png" />
