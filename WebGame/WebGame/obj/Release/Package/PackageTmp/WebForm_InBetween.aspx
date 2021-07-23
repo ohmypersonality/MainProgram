@@ -45,17 +45,44 @@ body{
 	height: 150px;
 	width: 350px;
 	padding: 10px;
-	z-index: 1;    
+	z-index: 3;    
+}
+
+.hide_button{
+    position: absolute;
+	top: calc(10% - 75px);
+	left: calc(10% - 50px);
+	height: 150px;
+	width: 350px;
+	padding: 10px;
+	z-index: 0;    
 }
 
 .Logout{
     position: absolute;
 	top: calc(10% - 75px);
-	left: calc(80% - 50px);
-	height: 150px;
-	width: 350px;
+	left: calc(75% - 50px);
+	height: 50px;
+	width: 50px;
 	padding: 10px;
-	z-index: 1;    
+	z-index: 3;    
+}
+
+.dialog{     
+    position: fixed;
+	top: calc(10% - 75px);
+	left: calc(45% - 50px);    
+	height: 350px;
+	width: 500px;
+    padding: 10px;
+	border:1px solid #888888;
+    background-color: #eeeeee;
+    box-shadow:0px 0px 10px #000000;
+	z-index: 2;
+}
+
+.dialog>.close{
+    position:absolute;top:2px;right:2px;cursor:pointer;
 }
 
 .Label_player{
@@ -65,7 +92,7 @@ body{
 	height: 150px;
 	width: 350px;
 	padding: 10px;
-	z-index: 2;
+	z-index: 1;
     display: grid;
     grid-template-columns:repeat(6,1fr);
     grid-gap:3px;
@@ -78,7 +105,7 @@ body{
 	height: 150px;
 	width: 350px;
 	padding: 10px;
-	z-index: 2;
+	z-index: 1;
     display: grid;
     grid-template-columns:repeat(6,1fr);
     grid-gap:3px;
@@ -91,7 +118,7 @@ body{
 	height: 150px;
 	width: 350px;
 	padding: 10px;
-	z-index: 2;
+	z-index: 1;
     display: grid;
     grid-template-columns:repeat(6,1fr);
     grid-gap:3px;
@@ -99,12 +126,12 @@ body{
 
 .GridView{
     position: absolute;
-    top: calc(45% - 75px);
+    top: calc(50% - 75px);
     left: calc(45% - 50px);
     height: 150px;
     width: 1000px;
     padding: 10px;
-    z-index: 2;
+    z-index: 1;
 }    
 
 
@@ -141,7 +168,7 @@ body{
 
 .ChatInput{
     position: absolute;
-    top: calc(45% - 75px);
+    top: calc(50% - 75px);
     left: calc(45% - 50px);
     height: 150px;
     width: 1000px;
@@ -151,7 +178,7 @@ body{
 
 .ChatButton{
     position: absolute;
-    top: calc(49% - 75px);
+    top: calc(54% - 75px);
     left: calc(45% - 50px);
     height: 150px;
     width: 1000px;
@@ -161,12 +188,12 @@ body{
 
 .ChatList{
     position: absolute;
-    top: calc(53% - 75px);
+    top: calc(58% - 75px);
     left: calc(45% - 50px);
     height: 150px;
     width: 1000px;
     padding: 10px;
-    z-index: 2;
+    z-index: 1;
 } 
 
 
@@ -175,9 +202,17 @@ body{
   
 <body>   
     <div class="body"></div>
-    <script> 
+    <script>
         window.onbeforeunload = function () {
             window.document.getElementById('Button_WindowsClose').click();
+        }
+
+        function showDialog() {
+            document.getElementById("dialog").style.display = "block";
+        }
+
+        function closeDialog() {
+            document.getElementById("dialog").style.display = "none";
         }
     </script>
     <!--在html中使用伺服器控制項，一定要用form標籤，而且只能用一次-->
@@ -186,11 +221,24 @@ body{
         <asp:ScriptManager ID="ScriptManager1" runat="server"/>  
         <!--以class標籤來使用區塊排版格式，該class在前面的style標籤中定義-->
         <div class="Label_header">  
-            <asp:Label ID="Label_Hello" runat="server" Text="" style="color:white;"></asp:Label>            
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <asp:Label ID="Label_Hello" runat="server" Text="" style="color:white;"></asp:Label>
+            &nbsp;&nbsp;
+            <button onclick="showDialog();">遊戲規則</button>        
         </div>        
         <div class="Logout"> 
-            <asp:Button ID="Button_Logout" runat="server" OnClick="Button_Logout_Click" Text="Logout" />
+            <asp:Button ID="Button_Logout" runat="server" OnClick="Button_Logout_Click" Text="Logout"/>
+        </div>
+
+        <div id="dialog" class="dialog">
+            <div onclick="closeDialog()" class="close">X</div>
+            <h4>遊戲規則</h4>
+            <h4>(1) Start：遊戲開始，莊家開兩張牌。</h4>
+            <h4>***若兩張牌點數差為0或1則莊家獲勝，玩家輸一倍賭金。</h4>
+            <h4>(2) Bet：操作選項之一，跟注開牌，賭贏得分、賭輸扣分。</h4>
+            <h4>***若開牌點數在莊家兩張牌範圍內，玩家贏一倍賭金。</h4>
+            <h4>***若開牌點數在莊家兩張牌範圍外，玩家輸一倍賭金。</h4>
+            <h4>***若開牌點數等於莊家其中一張牌，玩家輸兩倍賭金。</h4>
+            <h4>(3) Pass：操作選項之二，不跟注，跳過此回合。</h4>
         </div>
                   
         <!--使用UpdatePanel之後，只有內部的控制項會受到Timer影響-->
@@ -261,11 +309,11 @@ body{
 
         <asp:UpdatePanel ID="UpdatePanel1" runat="server"  UpdateMode="Conditional" ChildrenAsTriggers="true">
             <ContentTemplate>
-                <div class="Label_header">
+                <div class="hide_button">
                     <br />
                     <br />   
                     <br />
-                    <asp:Button ID="Button_WindowsClose" runat="server" OnClick="Button_ExitRoom_Click" Text="Windows Close"/>
+                    <asp:Button ID="Button_WindowsClose" runat="server" OnClick="Button_ExitRoom_Click" Text="Windows Close" Enabled ="false"/>
                 </div>
                 <div class="ChatButton">
                     <asp:Button ID="Button_Send" runat="server" OnClick="Button_SendMessage_Click" Text="Send Message" /> 
