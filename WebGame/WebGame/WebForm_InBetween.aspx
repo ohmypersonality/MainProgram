@@ -226,7 +226,7 @@ body{
             <button onclick="showDialog();">遊戲規則</button>        
         </div>        
         <div class="Logout"> 
-            <asp:Button ID="Button_Logout" runat="server" OnClick="Button_Logout_Click" Text="Logout" />
+            <asp:Button ID="Button_Logout" runat="server" OnClick="Button_Logout_Click" Text="Logout"/>
         </div>
 
         <div id="dialog" class="dialog">
@@ -313,7 +313,7 @@ body{
                     <br />
                     <br />   
                     <br />
-                    <asp:Button ID="Button_WindowsClose" runat="server" OnClick="Button_ExitRoom_Click" Text="Windows Close"/>
+                    <asp:Button ID="Button_WindowsClose" runat="server" OnClick="Button_ExitRoom_Click" Text="Windows Close" Enabled ="false"/>
                 </div>
                 <div class="ChatButton">
                     <asp:Button ID="Button_Send" runat="server" OnClick="Button_SendMessage_Click" Text="Send Message" /> 

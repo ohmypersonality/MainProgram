@@ -31,7 +31,7 @@
                         <div class="col-lg-6 col-xl-4">
 
                                 
-                                <asp:ImageButton ID="ImageButton2" runat="server" ImageUrl="~/pic/icon/JumpGame.jpg" OnClick="Button_Click" Height="360px" Width="410px" />  
+                                <asp:ImageButton ID="ImageButton2" runat="server" ImageUrl="~/pic/icon/jumpGame.jpg" OnClick="Button_Click" Height="360px" Width="410px" />  
                         </div>
                         <!-- Pricing card pro-->
                         <div class="col-lg-6 col-xl-4">
