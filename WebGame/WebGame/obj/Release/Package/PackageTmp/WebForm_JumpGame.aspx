@@ -8,6 +8,7 @@
             background-color: #f1f1f1;
         }
     </style>
+    <title>JumpGame</title>
 
 </head>
 <style>

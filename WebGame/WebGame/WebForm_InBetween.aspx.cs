@@ -44,6 +44,7 @@ namespace WebGame
 
                 if (room_number == null)
                 {
+                    //Response.BufferOutput = true;
                     Session["canExitRoom"] = false;
 
                     Button_Record.Text = "Record and ReSet";
@@ -68,6 +69,7 @@ namespace WebGame
                 }
                 else
                 {
+                    //Response.BufferOutput = false;
                     Session["canExitRoom"] = true;
                     
                     Button_Record.Text = "ReSet";
