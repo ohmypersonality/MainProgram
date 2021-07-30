@@ -168,7 +168,7 @@ body{
 		<br>
 		<div class="login">
 			<form id="Form_Login" runat="server" method="post">
-				<input type="text" placeholder="username" name="user"><br>
+				<input type="text" placeholder="username" name="user" required="required" aria-required="true" oninvalid="setCustomValidity('這是必填項目，請輸入')" oninput="this.setCustomValidity('')"><br>
 				<!--<input type="password" placeholder="password" name="password"><br>-->				
 				<asp:Button ID="Button_Login" runat="server" OnClick="Button_Login_Click" Text="Login" Height="35px" Width="261px" />	
 				</form>

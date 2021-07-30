@@ -327,16 +327,27 @@ namespace WebGame
                             {
                                 ((Image)player[i]).Visible = true;
 
-                                if (Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)] == null)
+                                //if (Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)] == null)
+                                //{
+                                //    Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)] = initial_score;
+                                //}
+
+                                Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)] = initial_score;
+                                if (status.Equals("NewGame"))
                                 {
-                                    Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)] = initial_score;
+
                                 }
-                                ((Label)player_score[i]).Text = Convert.ToString(Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)]);
+                                else
+                                {
+                                    ((Label)player_score[i]).Text = Convert.ToString(Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)]);
+                                }
+                                
 
                                 if (i == order)
                                 {
                                     ((Label)player_name[i]).Text = Convert.ToString(room_user[i]) + " (me)";
-                                    Label_NowCoin.Text = ((Label)player_score[i]).Text;
+                                    //Label_NowCoin.Text = ((Label)player_score[i]).Text;
+                                    Label_NowCoin.Text = Convert.ToString(Application[game_name + "_" + room_number + "_score_" + "player" + (i + 1)]);
                                 }
                                 else
                                 {
